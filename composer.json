@@ -5,7 +5,6 @@
     "homepage": "https://github.com/bupy7/yii2-cropbox",
     "type": "yii2-extension",
     "license": "BSD 3-Clause",
-    "minimum-stability": "dev",
     "authors": [
         {
             "name": "Vasilij Belosludcev",
@@ -13,8 +12,9 @@
             "homepage": "http://mihaly4.ru"
         }
     ],
+    "minimum-stability": "dev",
     "require": {
         "php":">=5.4.0",
-        "yiisoft/yii2-imagine":"*"
+        "yiisoft/yii2-imagine":"dev-master"
     }
 }
