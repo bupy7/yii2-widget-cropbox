@@ -1,3 +1,6 @@
+<?php
+use yii\helpers\Html;
+?>
 <div id="<?= $this->id; ?>" class="cropbox">
     <div class="imageBox">
         <div class="thumbBox"></div>
@@ -6,28 +9,27 @@
         <?php
         if ($this->thumbUrl && $this->originalUrl)
         {
-            echo TbHtml::link(CHtml::image($this->thumbUrl, '', array('class' => 'img-polaroid')), $this->originalUrl);
+            echo Html::a(Html::img($this->thumbUrl, '', array('class' => 'img-thumbnail')), $this->originalUrl, [
+                'target' => '_blank',
+            ]);
         }
         ?>
     </div>
-    <?= $this->form->fileFieldRow($this->model, $this->attribute, $this->htmlOptions, $this->rowOptions); ?>
+    <?= Html::activeFileInput($this->model, $this->attribute, $this->options); ?>
     <div class="control-group">
         <div class="controls">
             <?php
-            echo TbHtml::button(Yii::t('CropboxWidget.core', 'Crop'), array(
+            echo Html::button(Yii::t('CropboxWidget.core', 'Crop'), array(
                 'class' => 'btn-success btnCrop',
-                'icon' => 'screenshot',
             ));
-            echo TbHtml::button('', array(
+            echo Html::button('', array(
                 'class' => 'btnZoomIn',
-                'icon' => 'resize-full',
             ));
-            echo TbHtml::button('', array(
+            echo Html::button('', array(
                 'class' => 'btnZoomOut',
-                'icon' => 'resize-small',
             ));
             ?>
         </div>
     </div>
-    <?= CHtml::activeHiddenField($this->model, $this->attributeCropInfo); ?>
+    <?= Html::activeHiddenInput($this->model, $this->attributeCropInfo); ?>
 </div>
