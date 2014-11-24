@@ -12,7 +12,7 @@
             "homepage": "http://mihaly4.ru"
         }
     ],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "require": {
         "php":">=5.4.0",
         "yiisoft/yii2-imagine":"dev-master"
