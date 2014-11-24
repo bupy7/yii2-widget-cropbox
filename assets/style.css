@@ -1,0 +1,23 @@
+div.cropbox .imageBox {
+    position: relative;
+    height: 400px;
+    width: 400px;
+    border:1px solid #aaa;
+    background: #fff;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    cursor:move;
+}
+div.cropbox .imageBox .thumbBox {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    box-sizing: border-box;
+    border: 1px solid rgb(102, 102, 102);
+    box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
+    background: none repeat scroll 0% 0% transparent;
+}
+div.cropbox .cropped {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
