@@ -32,4 +32,41 @@ echo $form->field($model, 'image')->widget(Cropbox::className(), [
 
 ...
 ```
+
+Add to model:
+```php
+...
+
+public $image;
+public $crop_info;
+
+...
+
+public function rules()
+{
+    ...
+    
+    [
+        'image', 
+        'file', 
+        'extensions' => ['jpg', 'jpeg', 'png', 'gif'],
+        'mimeTypes' => ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif'],
+    ],
+    ['crop_info', 'filter', 'filter' => function($value) {
+        return \yii\helpers\Json::decode($value);
+    }],
+    
+    ...
+}
+
+...
+
+public function beforeSave()
+{
+    
+}
+
+...
+```
+
 #IN DEVELOPING!!! DON'T USE!!!
