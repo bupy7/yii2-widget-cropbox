@@ -47,6 +47,7 @@
                     o.dh = parseInt(o.size[1]),
                     o.sh = parseInt(this.image.height),
                     o.sw = parseInt(this.image.width);
+                    o.ratio = this.ratio;
                     
                     return o;
                 },
