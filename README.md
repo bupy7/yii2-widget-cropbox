@@ -20,6 +20,16 @@ to the **require** section of your **composer.json** file.
 
 ##How use
 
-TODO
+Add to view
+```php
+use bupy7\cropbox\Cropbox;
 
+...
+
+echo $form->field($model, 'image')->widget(Cropbox::className(), [
+    'attributeCropInfo' => 'crop_info',
+]);
+
+...
+```
 #IN DEVELOPING!!! DON'T USE!!!
