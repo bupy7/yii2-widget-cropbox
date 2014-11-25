@@ -41,18 +41,21 @@ class Cropbox extends InputWidget
     
     public function init()
     {
-        CropboxAsset::register($this->view);
+        parent::init();
         
-        $this->optionsCropboxCropbox = array_merge(array(
+        CropboxAsset::register($this->view);
+        $this->registerTranslations();
+        
+        $this->optionsCropbox = array_merge(array(
             'thumbBox' => '.thumbBox',
             'thumbWidth' => 200,
             'thumbHeight' => 200,
             'thumbMarginTop' => -100,
             'thumbMarginLeft' => -100,
         ), $this->optionsCropbox);
-        $this->htmlOptions = array_merge(array(
+        $this->options = array_merge(array(
             'class' => 'file',
-        ), $this->htmlOptions);
+        ), $this->options);
         
         $inputCrop = Html::getInputName($this->model, $this->attributeCropInfo);
         $optionsCropbox = Json::encode($this->optionsCropbox);
@@ -72,16 +75,20 @@ class Cropbox extends InputWidget
         var reader = new FileReader();
         reader.onload = function(e) {
             options.imgSrc = e.target.result;
-            cropper = $('#{$this->id} .imageBox').cropbox(options);
+            crop{$this->id} = $('#{$this->id} .imageBox').cropbox(options);
         }
         reader.readAsDataURL(this.files[0]);
         this.files = [];
     });
     $('#{$this->id} .btnCrop').on('click', function(){
-        var img = cropper.getDataURL(),
-            info = cropper.getInfo();
+        if (typeof crop{$this->id} === 'undefined')
+        {
+            return false;
+        }
+        var img = crop{$this->id}.getDataURL(),
+            info = crop{$this->id}.getInfo();
 
-        $('#{$this->id} .cropped').html('<img class="img-polaroid" src="' + img + '">');                                                
+        $('#{$this->id} .cropped').html('<img class="img-thumbnail" src="' + img + '">');                                                
         $('input[name="{$inputCrop}"]').val(JSON.stringify({
             x: info.dx,
             y: info.dy,
@@ -90,10 +97,16 @@ class Cropbox extends InputWidget
         }));
     });
     $('#{$this->id} .btnZoomIn').on('click', function(){
-        cropper.zoomIn();
+        if (typeof crop{$this->id} !== 'undefined')
+        {
+            crop{$this->id}.zoomIn();
+        }
     });
     $('#{$this->id} .btnZoomOut').on('click', function(){
-        cropper.zoomOut();
+        if (typeof crop{$this->id} !== 'undefined')
+        {
+            crop{$this->id}.zoomOut();
+        }
     });
 })(jQuery);               
 JS;
@@ -102,7 +115,32 @@ JS;
     
     public function run()
     {
-        return $this->render('field');
+        echo $this->render('field', [
+            'idWidget' => $this->id,
+            'model' => $this->model,
+            'attribute' => $this->attribute,
+            'thumbUrl' => $this->thumbUrl,
+            'originalUrl' => $this->originalUrl,
+            'options' => $this->options,
+            'attributeCropInfo' => $this->attributeCropInfo,
+        ]);
+    }
+    
+    public function registerTranslations()
+    {
+        Yii::$app->i18n->translations['bupy7/cropbox/*'] = [
+            'class' => 'yii\i18n\PhpMessageSource',
+            'sourceLanguage' => 'en',
+            'basePath' => '@bupy7/cropbox/messages',
+            'fileMap' => [
+                'bupy7/cropbox/core' => 'core.php',
+            ],
+        ];
+    }
+
+    public static function t($category, $message, $params = [], $language = null)
+    {
+        return Yii::t('bupy7/cropbox/' . $category, $message, $params, $language);
     }
 
 }

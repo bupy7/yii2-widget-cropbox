@@ -1,35 +1,37 @@
 <?php
 use yii\helpers\Html;
+use bupy7\cropbox\Cropbox;
 ?>
-<div id="<?= $this->id; ?>" class="cropbox">
+<div id="<?= $idWidget; ?>" class="cropbox">
     <div class="imageBox">
         <div class="thumbBox"></div>
     </div>
     <div class="cropped">
         <?php
-        if ($this->thumbUrl && $this->originalUrl)
+        if ($thumbUrl && $originalUrl)
         {
-            echo Html::a(Html::img($this->thumbUrl, '', array('class' => 'img-thumbnail')), $this->originalUrl, [
+            echo Html::a(Html::img($thumbUrl, '', array('class' => 'img-thumbnail')), $originalUrl, [
                 'target' => '_blank',
             ]);
         }
         ?>
     </div>
-    <?= Html::activeFileInput($this->model, $this->attribute, $this->options); ?>
-    <div class="control-group">
-        <div class="controls">
-            <?php
-            echo Html::button(Yii::t('CropboxWidget.core', 'Crop'), array(
-                'class' => 'btn-success btnCrop',
-            ));
-            echo Html::button('', array(
-                'class' => 'btnZoomIn',
-            ));
-            echo Html::button('', array(
-                'class' => 'btnZoomOut',
-            ));
-            ?>
-        </div>
+    <div class="btn-group">
+        <span class="btn btn-primary btn-file">
+            <?= Cropbox::t('core', 'Browse') . Html::activeFileInput($model, $attribute, $options); ?>
+        </span>
+        <?php
+        echo Html::button('+', array(
+            'class' => 'btn btn-default btnZoomIn',
+        ));
+        echo Html::button('-', array(
+            'class' => 'btn btn-default btnZoomOut',
+        ));
+        echo Html::button(Cropbox::t('core', 'Crop'), array(
+            'class' => 'btn btn-success btnCrop',
+        ));
+        ?>
     </div>
-    <?= Html::activeHiddenInput($this->model, $this->attributeCropInfo); ?>
 </div>
+<?php
+echo Html::activeHiddenInput($model, $attributeCropInfo);
