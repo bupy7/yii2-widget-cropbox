@@ -22,7 +22,7 @@ to the **require** section of your **composer.json** file.
 
 ##How use
 
-For example I will be use Imagine extensions for Yii2 https://github.com/yiisoft/yii2-imagine . You can use something other.
+For example I will be use **Imagine extensions for Yii2** https://github.com/yiisoft/yii2-imagine . You can use something other.
 
 Add to action of controller
 ```php
@@ -125,6 +125,38 @@ public function afterSave()
 }
 
 ...
+```
+
+##Configuration
+
+####Thumbnail box
+
+By default thumbnail box has dimensions 200x200px. You can change their:
+
+```php
+echo $form->field($model, 'image')->widget(Cropbox::className(), [
+    'attributeCropInfo' => 'crop_info',
+    'optionsCropbox' => [
+        'thumbWidth' => 350,
+        'thumbHeight' => 400,
+    ],
+]);
+```
+
+####Frame cropping
+
+By default frame cropping centrally located. You can change it:
+
+```php
+echo $form->field($model, 'image')->widget(Cropbox::className(), [
+    'attributeCropInfo' => 'crop_info',
+    'optionsCropbox' => [
+        'thumbWidth' => 350,
+        'thumbHeight' => 400,
+        'thumbMarginTop' => 8,
+        'thumbMarginLeft' => 3,
+    ],
+]);
 ```
 
 #IN DEVELOPING!!! DON'T USE!!!
