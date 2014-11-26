@@ -22,6 +22,25 @@ to the **require** section of your **composer.json** file.
 
 ##How use
 
+For example I will be use Imagine extensions for Yii2 https://github.com/yiisoft/yii2-imagine . You can use something other.
+
+Add to action of controller
+```php
+...
+
+if ($model->load(Yii::$app->request->post()))
+{   
+    $model->image = \yii\web\UploadedFile::getInstance($model, 'image');
+    
+    if ($model->save()) 
+    {
+        return $this->redirect(['index']);
+    }
+}
+
+...
+```
+
 Add to view
 ```php
 use bupy7\cropbox\Cropbox;
@@ -39,6 +58,11 @@ Add to model:
 ```php
 ...
 
+use yii\helpers\FileHelper;
+use yii\imagine\Image;
+
+...
+
 public $image;
 public $crop_info;
 
@@ -54,18 +78,50 @@ public function rules()
         'extensions' => ['jpg', 'jpeg', 'png', 'gif'],
         'mimeTypes' => ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif'],
     ],
-    ['crop_info', 'filter', 'filter' => function($value) {
-        return \yii\helpers\Json::decode($value);
-    }],
     
     ...
 }
 
 ...
 
-public function beforeSave()
+public function afterSave()
 {
+    ...
     
+    // open image
+    $image = Image::getImagine()->open($this->image->tempName);
+    
+    //rendering information about crop
+    $cropInfo = \yii\helpers\Json::decode($this->crop_info);
+    $cropInfo['dw'] = (int)$cropInfo['dw'];
+    $cropInfo['dh'] = (int)$cropInfo['dh'];
+    $cropInfo['x'] = abs($cropInfo['x']);
+    $cropInfo['y'] = abs($cropInfo['y']);
+    
+    //delete old images
+    $oldImages = FileHelper::findFiles(Yii::getAlias('@path/to/save/image'), [
+        'only' => [
+            $this->id . '.*',
+            'thumb_' . $id . '.*',
+        ], 
+    ]);
+    for ($i = 0; $i != count($oldImages); $i++)
+    {
+        @unlink($oldImages[$i]);
+    }
+    
+    //saving thumbnail
+    $newSizeMiddle = new \Imagine\Image\Box($cropInfo['dw'], $cropInfo['dh']);
+    $cropSizeMiddle = new \Imagine\Image\Box($module->middleImageSize[0], $module->middleImageSize[1]);
+    $cropPointMiddle = new \Imagine\Image\Point($cropInfo['x'], $cropInfo['y']);
+    $pathMiddleImage = Yii::getAlias('@path/to/save/image') . '/thumb_' . $this->id . '.' . $this->image->getExtension();  
+    
+    $image->resize($newSizeMiddle)
+        ->crop($cropPointMiddle, $cropSizeMiddle)
+        ->save($pathMiddleImage, ['quality' => 100]);
+        
+    //saving original
+    $this->image->saveAs(Yii::getAlias('@path/to/save/image') . $this->id . '.' . $this->image->getExtension());
 }
 
 ...
