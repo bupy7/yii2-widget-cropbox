@@ -179,5 +179,7 @@ echo $form->field($model, 'image')->widget(Cropbox::className(), [
 
 If you click to preview image then you see original image.
 
-#IN DEVELOPING!!! DON'T USE!!!
+##License
+
+yii2-widget-cropbox is released under the BSD 3-Clause License.
 
