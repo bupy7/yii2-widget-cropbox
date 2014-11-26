@@ -159,5 +159,25 @@ echo $form->field($model, 'image')->widget(Cropbox::className(), [
 ]);
 ```
 
+####Preview exist image of item
+
+If you want showing uploaded and cropped image, you must add following code:
+
+```php
+echo $form->field($model, 'image')->widget(Cropbox::className(), [
+    'attributeCropInfo' => 'crop_info',
+    'optionsCropbox' => [
+        'thumbWidth' => 350,
+        'thumbHeight' => 400,
+        'thumbMarginTop' => 8,
+        'thumbMarginLeft' => 3,
+    ],
+    'previewUrl' => 'path/to/small/image',
+    'originalUrl' => 'path/to/original/image', 
+]);
+```
+
+If you click to thumbnail image then you see original image.
+
 #IN DEVELOPING!!! DON'T USE!!!
 
