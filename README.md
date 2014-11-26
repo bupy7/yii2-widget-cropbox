@@ -112,7 +112,7 @@ public function afterSave()
     
     //saving thumbnail
     $newSizeMiddle = new \Imagine\Image\Box($cropInfo['dw'], $cropInfo['dh']);
-    $cropSizeMiddle = new \Imagine\Image\Box($module->middleImageSize[0], $module->middleImageSize[1]);
+    $cropSizeMiddle = new \Imagine\Image\Box(200, 200); //frame size of crop
     $cropPointMiddle = new \Imagine\Image\Point($cropInfo['x'], $cropInfo['y']);
     $pathMiddleImage = Yii::getAlias('@path/to/save/image') . '/thumb_' . $this->id . '.' . $this->image->getExtension();  
     
