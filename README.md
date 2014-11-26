@@ -172,8 +172,8 @@ echo $form->field($model, 'image')->widget(Cropbox::className(), [
         'thumbMarginTop' => 8,
         'thumbMarginLeft' => 3,
     ],
-    'previewUrl' => 'path/to/small/image',
-    'originalUrl' => 'path/to/original/image', 
+    'previewUrl' => 'url/to/small/image',
+    'originalUrl' => 'url/to/original/image', 
 ]);
 ```
 
