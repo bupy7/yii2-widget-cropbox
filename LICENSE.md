@@ -1,5 +1,5 @@
-Copyright (c) 2014, Belosludcev Vasilij
-http://mihaly4.ru
+Copyright (c) 2014, Belosludcev Vasilij 
+
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
