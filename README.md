@@ -101,7 +101,7 @@ public function afterSave()
     $cropInfo['dh'] = (int)$cropInfo['dh']; //new height image
     $cropInfo['x'] = abs($cropInfo['x']); //begin position of frame crop by X
     $cropInfo['y'] = abs($cropInfo['y']); //begin position of frame crop by Y
-    $cropInfo['ratio'] = $cropInfo['ratio'] == 0 ? 1.0 : (float)$cropInfo['ratio']; //ratio image. We don't use in this example
+    //$cropInfo['ratio'] = $cropInfo['ratio'] == 0 ? 1.0 : (float)$cropInfo['ratio']; //ratio image. We don't use in this example
     
     //delete old images
     $oldImages = FileHelper::findFiles(Yii::getAlias('@path/to/save/image'), [
