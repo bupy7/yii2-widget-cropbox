@@ -177,7 +177,7 @@ echo $form->field($model, 'image')->widget(Cropbox::className(), [
 ]);
 ```
 
-If you click to thumbnail image then you see original image.
+If you click to preview image then you see original image.
 
 #IN DEVELOPING!!! DON'T USE!!!
 
