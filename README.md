@@ -60,6 +60,9 @@ Add to model:
 
 use yii\helpers\FileHelper;
 use yii\imagine\Image;
+use yii\helpers\Json;
+use Imagine\Image\Box;
+use Imagine\Image\Point;
 
 ...
 
@@ -93,7 +96,7 @@ public function afterSave()
     $image = Image::getImagine()->open($this->image->tempName);
     
     //rendering information about crop
-    $cropInfo = \yii\helpers\Json::decode($this->crop_info);
+    $cropInfo = Json::decode($this->crop_info);
     $cropInfo['dw'] = (int)$cropInfo['dw'];
     $cropInfo['dh'] = (int)$cropInfo['dh'];
     $cropInfo['x'] = abs($cropInfo['x']);
@@ -112,9 +115,9 @@ public function afterSave()
     }
     
     //saving thumbnail
-    $newSizeMiddle = new \Imagine\Image\Box($cropInfo['dw'], $cropInfo['dh']);
-    $cropSizeMiddle = new \Imagine\Image\Box(200, 200); //frame size of crop
-    $cropPointMiddle = new \Imagine\Image\Point($cropInfo['x'], $cropInfo['y']);
+    $newSizeMiddle = new Box($cropInfo['dw'], $cropInfo['dh']);
+    $cropSizeMiddle = new Box(200, 200); //frame size of crop
+    $cropPointMiddle = new Point($cropInfo['x'], $cropInfo['y']);
     $pathMiddleImage = Yii::getAlias('@path/to/save/image') . '/thumb_' . $this->id . '.' . $this->image->getExtension();  
     
     $image->resize($newSizeMiddle)
