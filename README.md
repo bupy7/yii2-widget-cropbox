@@ -116,14 +116,14 @@ public function afterSave()
     }
     
     //saving thumbnail
-    $newSizeMiddle = new Box($cropInfo['dw'], $cropInfo['dh']);
-    $cropSizeMiddle = new Box(200, 200); //frame size of crop
-    $cropPointMiddle = new Point($cropInfo['x'], $cropInfo['y']);
-    $pathMiddleImage = Yii::getAlias('@path/to/save/image') . '/thumb_' . $this->id . '.' . $this->image->getExtension();  
+    $newSizeThumb = new Box($cropInfo['dw'], $cropInfo['dh']);
+    $cropSizeThumb = new Box(200, 200); //frame size of crop
+    $cropPointThumb = new Point($cropInfo['x'], $cropInfo['y']);
+    $pathThumbImage = Yii::getAlias('@path/to/save/image') . '/thumb_' . $this->id . '.' . $this->image->getExtension();  
     
-    $image->resize($newSizeMiddle)
-        ->crop($cropPointMiddle, $cropSizeMiddle)
-        ->save($pathMiddleImage, ['quality' => 100]);
+    $image->resize($newSizeThumb)
+        ->crop($cropPointThumb, $cropSizeThumb)
+        ->save($pathThumbImage, ['quality' => 100]);
         
     //saving original
     $this->image->saveAs(Yii::getAlias('@path/to/save/image') . $this->id . '.' . $this->image->getExtension());
