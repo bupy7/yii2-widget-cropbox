@@ -127,7 +127,7 @@ JS;
     
     public function run()
     {
-        echo $this->render('field', [
+        return $this->render('field', [
             'idWidget' => $this->id,
             'model' => $this->model,
             'attribute' => $this->attribute,
