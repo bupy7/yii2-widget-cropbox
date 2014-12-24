@@ -8,7 +8,7 @@ use bupy7\cropbox\Cropbox;
     </div>
     <div class="cropped">
         <?php
-        if ($preview && !$originalUrl)
+        if ($previewUrl && !$originalUrl)
         {
             echo Html::img($previewUrl, ['class' => 'img-thumbnail']);
         }
