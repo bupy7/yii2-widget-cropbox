@@ -191,7 +191,7 @@ The difference from previous methods in that we do not resize of image before cr
 For this we will use of property `ratio` from `$cropInfo`.
 
 ```php
-$cropInfo = \yii\helpers\Json::decode($this->crop_info);
+$cropInfo = Json::decode($this->crop_info);
 $cropInfo['dw'] = (int)$cropInfo['dw'];
 $cropInfo['dh'] = (int)$cropInfo['dh'];
 $cropInfo['x'] = abs($cropInfo['x']);
@@ -200,12 +200,11 @@ $cropInfo['ratio'] = $cropInfo['ratio'] == 0 ? 1.0 : (float)$cropInfo['ratio'];
  
 $image = Image::getImagine()->open($this->image->tempName);
  
-$cropSizeLarge = new \Imagine\Image\Box(200 / $cropInfo['ratio'], 200 / $cropInfo['ratio']);
-$cropPointLarge = new \Imagine\Image\Point($cropInfo['x'] / $cropInfo['ratio'], $cropInfo['y'] / $cropInfo['ratio']);
+$cropSizeLarge = new Box(200 / $cropInfo['ratio'], 200 / $cropInfo['ratio']);
+$cropPointLarge = new Point($cropInfo['x'] / $cropInfo['ratio'], $cropInfo['y'] / $cropInfo['ratio']);
 $pathLargeImage = Yii::getAlias('path/to/save') . '/' . $this->id . '.' . $this->image->getExtension();
  
-$image->copy()
-    ->crop($cropPointLarge, $cropSizeLarge)
+$image->crop($cropPointLarge, $cropSizeLarge)
     ->save($pathLargeImage, ['quality' => $module->qualityLarge]);
 ```
 
