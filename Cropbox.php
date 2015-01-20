@@ -77,7 +77,7 @@ class Cropbox extends InputWidget
      *  
      * ]
      * 
-     * or more one options:
+     * or more once option:
      * [
      *      'cropSettings' => [
      *          [
