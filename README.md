@@ -20,7 +20,7 @@ or add
 
 to the **require** section of your **composer.json** file.
 
-If you use v1.1 small then go to [releases](https://github.com/bupy7/yii2-widget-cropbox/releases) and select version of extenions for install.
+If you use v1.0 then go to [v1.0](https://github.com/bupy7/yii2-widget-cropbox/tree/v1.0).
 
 ##How use
 
