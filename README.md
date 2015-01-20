@@ -9,7 +9,7 @@ This is widget wrapper and fork of Cropbox https://github.com/hongkhanh/cropbox 
 
 - Simple! =)
 - Cropping image before upload to server.
-- Cropping more **one** option.
+- Cropping more **once** option.
 - Labels for settings of crop.
 - You can use custom view.
 
@@ -242,7 +242,7 @@ $image->crop($cropPointLarge, $cropSizeLarge)
     ->save($pathLargeImage, ['quality' => $module->qualityLarge]);
 ```
 
-####Cropping more one option
+####Cropping more once option
 
 View: 
 
