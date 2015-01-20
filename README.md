@@ -20,6 +20,8 @@ or add
 
 to the **require** section of your **composer.json** file.
 
+If you use v1.1 small then go to [releases](https://github.com/bupy7/yii2-widget-cropbox/releases) and select version of extenions for install.
+
 ##How use
 
 For example I will be use **Imagine extensions for Yii2** https://github.com/yiisoft/yii2-imagine . You can use something other.
@@ -99,8 +101,8 @@ public function afterSave()
     // open image
     $image = Image::getImagine()->open($this->image->tempName);
     
-    //rendering information about crop
-    $cropInfo = Json::decode($this->crop_info);
+    // rendering information about crop of ONE image 
+    $cropInfo = Json::decode($this->crop_info[0]);
     $cropInfo['dw'] = (int)$cropInfo['dw']; //new width image
     $cropInfo['dh'] = (int)$cropInfo['dh']; //new height image
     $cropInfo['x'] = abs($cropInfo['x']); //begin position of frame crop by X
@@ -114,8 +116,7 @@ public function afterSave()
             'thumb_' . $id . '.*',
         ], 
     ]);
-    for ($i = 0; $i != count($oldImages); $i++)
-    {
+    for ($i = 0; $i != count($oldImages); $i++) {
         @unlink($oldImages[$i]);
     }
     
@@ -146,8 +147,14 @@ By default thumbnail box has dimensions 200x200px. You can change their:
 echo $form->field($model, 'image')->widget(Cropbox::className(), [
     'attributeCropInfo' => 'crop_info',
     'optionsCropbox' => [
-        'thumbWidth' => 350,
-        'thumbHeight' => 400,
+        'boxWidth' => 400,
+        'boxHeight' => 300,
+        'cropSettings' => [
+            [
+                'width' => 350,
+                'height' => 200,
+            ],
+        ],
     ],
 ]);
 ```
@@ -160,10 +167,16 @@ By default frame cropping centrally located. You can change it:
 echo $form->field($model, 'image')->widget(Cropbox::className(), [
     'attributeCropInfo' => 'crop_info',
     'optionsCropbox' => [
-        'thumbWidth' => 350,
-        'thumbHeight' => 400,
-        'thumbMarginTop' => 8,
-        'thumbMarginLeft' => 3,
+        'boxWidth' => 400,
+        'boxHeight' => 300,
+        'cropSettings' => [
+            [
+                'width' => 350,
+                'height' => 200,
+                'marginLeft' => 10,
+                'marginTop' => 20,  
+            ],
+        ],
     ],
 ]);
 ```
@@ -176,12 +189,20 @@ If you want showing uploaded and cropped image, you must add following code:
 echo $form->field($model, 'image')->widget(Cropbox::className(), [
     'attributeCropInfo' => 'crop_info',
     'optionsCropbox' => [
-        'thumbWidth' => 350,
-        'thumbHeight' => 400,
-        'thumbMarginTop' => 8,
-        'thumbMarginLeft' => 3,
+        'boxWidth' => 400,
+        'boxHeight' => 300,
+        'cropSettings' => [
+            [
+                'width' => 350,
+                'height' => 200,
+                'marginLeft' => 10,
+                'marginTop' => 20,  
+            ],
+        ],
     ],
-    'previewUrl' => 'url/to/small/image',
+    'previewUrl' => [
+        'url/to/small/image'
+    ],
     'originalUrl' => 'url/to/original/image', 
 ]);
 ```
@@ -195,7 +216,7 @@ The difference from previous methods in that we do not resize of image before cr
 For this we will use of property `ratio` from `$cropInfo`.
 
 ```php
-$cropInfo = Json::decode($this->crop_info);
+$cropInfo = Json::decode($this->crop_info[0]);
 $cropInfo['dw'] = (int)$cropInfo['dw'];
 $cropInfo['dh'] = (int)$cropInfo['dh'];
 $cropInfo['x'] = abs($cropInfo['x']);
@@ -210,6 +231,95 @@ $pathLargeImage = Yii::getAlias('path/to/save') . '/' . $this->id . '.' . $this-
  
 $image->crop($cropPointLarge, $cropSizeLarge)
     ->save($pathLargeImage, ['quality' => $module->qualityLarge]);
+```
+
+####Cropping more one image
+
+View: 
+
+```php
+echo $form->field($model, 'image')->widget(Cropbox::className(), [
+    'attributeCropInfo' => 'crop_info',
+    'optionsCropbox' => [
+        'boxWidth' => 400,
+        'boxHeight' => 300,
+        'cropSettings' => [
+            [
+                'width' => 150,
+                'height' => 150,
+            ],
+            [
+                'width' => 350,
+                'height' => 200,
+            ]
+        ],
+        'messages' => [
+            'Thumbnail image',
+            'Small image',
+        ],
+    ],
+]);
+```
+
+Model:
+
+```php
+...
+
+public function afterSave()
+{
+    ...
+    
+    // open image
+    $image = Image::getImagine()->open($this->image->tempName);
+    
+    $cropSettings = [
+        [
+            'width' => 150,
+            'height' => 150,
+        ],
+        [
+            'width' => 350,
+            'height' => 200,
+        ],
+    ];
+    for($i = 0; $i != count($this->crop_info[$i]); $i++) {
+        $cropInfo = Json::decode($this->crop_info[$i]);
+        $cropInfo['dw'] = (int)$cropInfo['dw']; //new width image
+        $cropInfo['dh'] = (int)$cropInfo['dh']; //new height image
+        $cropInfo['x'] = abs($cropInfo['x']); //begin position of frame crop by X
+        $cropInfo['y'] = abs($cropInfo['y']); //begin position of frame crop by Y
+        //$cropInfo['ratio'] = $cropInfo['ratio'] == 0 ? 1.0 : (float)$cropInfo['ratio']; //ratio image. We don't use in this example
+
+        //delete old images
+        $oldImages = FileHelper::findFiles(Yii::getAlias('@path/to/save/image'), [
+            'only' => [
+                $this->id . '.' . $i . '.*',
+                'thumb_' . $this->id . '.' . $i . '.*',
+            ], 
+        ]);
+        for ($j = 0; $j != count($oldImages); $j++) {
+            @unlink($oldImages[$j]);
+        }
+
+        //saving thumbnail
+        $newSizeThumb = new Box($cropInfo['dw'], $cropInfo['dh']);
+        $cropSizeThumb = new Box($cropSettings[$i]['width'], $cropSettings[$i]['height']); //frame size of crop
+        $cropPointThumb = new Point($cropInfo['x'], $cropInfo['y']);
+        $pathThumbImage = Yii::getAlias('@path/to/save/image') . '/thumb_' . $this->id . '.' . $i . '.' . $this->image->getExtension();  
+
+        $image->copy()
+            ->resize($newSizeThumb)
+            ->crop($cropPointThumb, $cropSizeThumb)
+            ->save($pathThumbImage, ['quality' => 100]);
+
+        //saving original
+        $this->image->saveAs(Yii::getAlias('@path/to/save/image') . $this->id . '.' . $i . '.' . $this->image->getExtension());
+    }
+}
+
+...
+
 ```
 
 ##License

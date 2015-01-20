@@ -6,23 +6,10 @@ use bupy7\cropbox\Cropbox;
     <div class="imageBox">
         <div class="thumbBox"></div>
     </div>
-    <div class="cropped">
-        <?php
-        if ($previewUrl && !$originalUrl)
-        {
-            echo Html::img($previewUrl, ['class' => 'img-thumbnail']);
-        }
-        elseif ($previewUrl && $originalUrl)
-        {
-            echo Html::a(Html::img($previewUrl, ['class' => 'img-thumbnail']), $originalUrl, [
-                'target' => '_blank',
-            ]);
-        }
-        ?>
-    </div>
+    <p class="message"></p>
     <div class="btn-group">
         <span class="btn btn-primary btn-file">
-            <?= Cropbox::t('core', 'Browse') . Html::activeFileInput($model, $attribute, $options); ?>
+            <?= Cropbox::t('Browse') . Html::activeFileInput($model, $attribute, $options); ?>
         </span>
         <?php
         echo Html::button('+', array(
@@ -31,9 +18,26 @@ use bupy7\cropbox\Cropbox;
         echo Html::button('-', array(
             'class' => 'btn btn-default btnZoomOut',
         ));
-        echo Html::button(Cropbox::t('core', 'Crop'), array(
+        echo Html::button(Cropbox::t('Crop'), array(
             'class' => 'btn btn-success btnCrop',
         ));
+        ?>
+    </div>
+    <div class="cropped">
+        <?php
+        if (is_string($originalUrl) && !empty($originalUrl))
+        {
+            echo Html::a(Cropbox::t('Show original'), $originalUrl, [
+                'target' => '_blank',
+                'class' => 'btn btn-info',
+            ]);
+        }
+        if (is_array($previewUrl) && !empty($previewUrl))
+        {
+            foreach ($previewUrl as $url) {
+                echo Html::img($previewUrl, ['class' => 'img-thumbnail']);
+            }
+        }
         ?>
     </div>
 </div>

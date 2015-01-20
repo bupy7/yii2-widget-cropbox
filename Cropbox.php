@@ -14,13 +14,31 @@ use yii\helpers\Json;
  * GitHub repository this widget: https://github.com/bupy7/yii2-cropbox
  * 
  * @author Vasilij "BuPy7" Belosludcev http://mihaly4.ru
- * @version 1.1
+ * @version 2.0
  */
 class Cropbox extends InputWidget
 {
     
     /**
-     * @var string Attribute name where will be crop information in JSON format.
+     * @var array Attribute name where will be crop information in JSON format. 
+     * After cropping image all information will be added with uses key from $optionsCropbox.
+     * Example: [
+     *      {
+     *          "x":-86,
+     *          "y":-17,
+     *          "dw":372,
+     *          "dh":232,
+     *          "ratio":0.5314410000000002
+     *      },
+     *      {
+     *          "x":-136,
+     *          "y":-67,
+     *          "dw":372,
+     *          "dh":232,
+     *          "ratio":0.5314410000000002
+     *      }
+     * ]
+     * 
      * @property int $x Start crop by X.
      * @property int $y Start crop by Y.
      * @property int $dw Width image after resize.
@@ -32,22 +50,70 @@ class Cropbox extends InputWidget
     /**
      * @var array Cropbox options.
      * 
-     * @property string $thumbBox Class of thumbBox.
-     * @property int $thumbWidth Width of thumbBox.
-     * @property int $thumbHeiht Height of thumbBox.
-     * @property int $thumbMarginTop Property margin-top of thumbBox.
-     * @property int $thumbMarginLeft Property margin-left of thumbBox.
-     * 
+     * @property int $boxWidth Width of box for thumb image. By default 300.
+     * @property int $boxHeight Height of box for thumb image. By default 300.
+     * @property array $cropSettings
+     * [
+     *      int $width Width of thumbBox. By default 200.
+     *      int $heiht Height of thumbBox. By default 200.
+     *      int $marginTop Property margin-top of thumbBox. By default center.
+     *      int $marginLeft Property margin-left of thumbBox. By default center.
+     * ]
+     * @property array $messages Array with messages for croppping options. 
+     *
      * and etc. See cropbox.js to assets this widget.
+     * 
+     * Example use:
+     * [   
+     *      'cropSettings' => [
+     *          [
+     *              'width' => 350,
+     *              'height' => 400,
+     *          ],
+     *      ],
+     *      'messages' => [
+     *          'Preview image of article',
+     *      ]
+     *  
+     * ]
+     * 
+     * or more one options:
+     * [
+     *      'cropSettings' => [
+     *          [
+     *              'width' => 350,
+     *              'height' => 400,
+     *          ],
+     *          [
+     *              'width' => 150,
+     *              'height' => 150,
+     *          ],
+     *          'messages' => [
+     *              'Preview image of article',
+     *              'Thumbnail image of article',
+     *          ],
+     *      ],
+     * ]
      */
     public $optionsCropbox = [];
     
     /**
-     * Link to image for display before upload.
+     * @string Link to image for display before upload to original URL.
      */
     public $originalUrl;
+    
+    /**
+     * @mixed Link to images for display before upload to preview URL.
+     * Example:
+     * [
+     *      '/uploads/1.png',
+     *      '/uploads/2.png',
+     * ];
+     * 
+     * or simply string to image without.
+     */
     public $previewUrl;
-	
+    
     /**
      * @var string Path to view of cropbox field.
      * Example: '@app/path/to/view'
@@ -61,71 +127,26 @@ class Cropbox extends InputWidget
         CropboxAsset::register($this->view);
         $this->registerTranslations();
         
-        $this->optionsCropbox = array_merge(array(
-            'thumbBox' => '.thumbBox',
-            'thumbWidth' => 200,
-            'thumbHeight' => 200,
-        ), $this->optionsCropbox);
-        $this->options = array_merge(array(
+        $this->optionsCropbox = array_merge([
+            'boxWidth' => 300,
+            'boxHeight' => 300,
+        ], $this->optionsCropbox);
+        if (!isset($this->optionsCropbox['cropSettings']) || empty($this->optionsCropbox['cropSettings'])) {
+            $this->optionsCropbox['cropSettings'][] = [
+                'width' => 200,
+                'height' => 200,
+            ];
+        }
+        $this->optionsCropbox['idCropInfo'] = Html::getInputId($this->model, $this->attributeCropInfo);
+        $this->options = array_merge([
             'class' => 'file',
-        ), $this->options);
+        ], $this->options);
         
-        $inputCrop = Html::getInputName($this->model, $this->attributeCropInfo);
         $optionsCropbox = Json::encode($this->optionsCropbox);
         
         $js = <<<JS
 (function($){
-    var options = {$optionsCropbox};
-
-    $('#{$this->id} ' + options.thumbBox).css({
-        width: options.thumbWidth,
-        height: options.thumbHeight,
-        marginTop: options.thumbMarginTop || options.thumbHeight / 2 * -1 ,
-        marginLeft: options.thumbMarginLeft || options.thumbWidth / 2 * -1,
-    });
-    $('#{$this->id} .imageBox').css({
-        width: options.thumbWidth + 100,
-        height: options.thumbHeight + 100,
-    });
-
-    $('#{$this->id} .file').on('change', function() {
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            options.imgSrc = e.target.result;
-            crop{$this->id} = $('#{$this->id} .imageBox').cropbox(options);
-        }
-        reader.readAsDataURL(this.files[0]);
-        this.files = [];
-    });
-    $('#{$this->id} .btnCrop').on('click', function(){
-        if (typeof crop{$this->id} === 'undefined')
-        {
-            return false;
-        }
-        var img = crop{$this->id}.getDataURL(),
-            info = crop{$this->id}.getInfo();
-
-        $('#{$this->id} .cropped').html('<img class="img-thumbnail" src="' + img + '">');                                                
-        $('input[name="{$inputCrop}"]').val(JSON.stringify({
-            x: info.dx,
-            y: info.dy,
-            dw: info.dw,
-            dh: info.dh,
-            ratio: info.ratio
-        }));
-    });
-    $('#{$this->id} .btnZoomIn').on('click', function(){
-        if (typeof crop{$this->id} !== 'undefined')
-        {
-            crop{$this->id}.zoomIn();
-        }
-    });
-    $('#{$this->id} .btnZoomOut').on('click', function(){
-        if (typeof crop{$this->id} !== 'undefined')
-        {
-            crop{$this->id}.zoomOut();
-        }
-    });
+    $('#{$this->id}').cropbox({$optionsCropbox});
 })(jQuery);               
 JS;
         $this->view->registerJs($js, \yii\web\View::POS_END);
@@ -156,9 +177,9 @@ JS;
         ];
     }
 
-    public static function t($category, $message, $params = [], $language = null)
+    public static function t($message, $params = [], $language = null)
     {
-        return Yii::t('bupy7/cropbox/' . $category, $message, $params, $language);
+        return Yii::t('bupy7/cropbox/core', $message, $params, $language);
     }
 
 }

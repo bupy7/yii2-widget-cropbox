@@ -15,8 +15,19 @@ div.cropbox .imageBox .thumbBox {
     box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
     background: none repeat scroll 0% 0% transparent;
 }
-div.cropbox .cropped {
+div.cropbox .message {
     margin-top: 10px;
+    margin-bottom: 10px;
+}
+div.cropbox .btn-group {
+    margin-bottom: 10px;
+    margin-bottom: 10px;
+}
+div.cropbox .cropped img {
+    display: block;
+    margin-bottom: 10px;
+}
+div.cropbox .cropped .btn {
     margin-bottom: 10px;
 }
 div.cropbox .btn-file {

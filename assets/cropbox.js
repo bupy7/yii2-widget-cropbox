@@ -1,5 +1,8 @@
 /**
- * Created by ezgoing on 14/9/2014.
+ * Cropbox module of jQuery. A lightweight and simple plugin to crop your image. 
+ * 
+ * @author Nguyen Hong Khanh https://github.com/hongkhanh
+ * @author Belosludcev Vasilij https://github.com/bupy7
  */
 
 "use strict";
@@ -10,21 +13,18 @@
         factory(jQuery);
     }
 }(function ($) {
-    var cropbox = function(options, el){
-        var el = el || $(options.imageBox),
-            obj =
-            {
+    
+    var cropbox = function(options, el) {       
+        var obj = {
                 state : {},
                 ratio : 1,
                 options : options,
                 imageBox : el,
-                thumbBox : el.find(options.thumbBox),
-                spinner : el.find(options.spinner),
+                thumbBox : el.find('.thumbBox'),
                 image : new Image(),
-                getDataURL: function ()
-                {
+                getDataURL: function (thumbWidth, thumbHeight) {
                     var canvas = document.createElement("canvas"),
-                        info = this.getInfo();
+                        info = this.getInfo(thumbWidth, thumbHeight);
 
                     canvas.width = info.width;
                     canvas.height = info.height;
@@ -33,11 +33,10 @@
                     var imageData = canvas.toDataURL('image/png');
                     return imageData;
                 },
-                getInfo: function()
-                {
+                getInfo: function(thumbWidth, thumbHeight) {
                     var o = {
-                        width: this.options.thumbWidth,
-                        height: this.options.thumbHeight,
+                        width: thumbWidth,
+                        height: thumbHeight,
                         dim: el.css('background-position').split(' '),
                         size: el.css('background-size').split(' ')
                     };
@@ -51,19 +50,16 @@
                     
                     return o;
                 },
-                zoomIn: function ()
-                {
+                zoomIn: function () {
                     this.ratio*=1.1;
                     setBackground();
                 },
-                zoomOut: function ()
-                {
+                zoomOut: function () {
                     this.ratio*=0.9;
                     setBackground();
                 }
             },
-            setBackground = function()
-            {
+            setBackground = function() {
                 var w =  parseInt(obj.image.width)*obj.ratio;
                 var h =  parseInt(obj.image.height)*obj.ratio;
 
@@ -76,16 +72,14 @@
                     'background-position': pw + 'px ' + ph + 'px',
                     'background-repeat': 'no-repeat'});
             },
-            imgMouseDown = function(e)
-            {
+            imgMouseDown = function(e) {
                 e.stopImmediatePropagation();
 
                 obj.state.dragable = true;
                 obj.state.mouseX = e.clientX;
                 obj.state.mouseY = e.clientY;
             },
-            imgMouseMove = function(e)
-            {
+            imgMouseMove = function(e) {
                 e.stopImmediatePropagation();
 
                 if (obj.state.dragable)
@@ -104,15 +98,12 @@
                     obj.state.mouseY = e.clientY;
                 }
             },
-            imgMouseUp = function(e)
-            {
+            imgMouseUp = function(e) {
                 e.stopImmediatePropagation();
                 obj.state.dragable = false;
             };
 
-        obj.spinner.show();
         obj.image.onload = function() {
-            obj.spinner.hide();
             setBackground();
 
             el.bind('mousedown', imgMouseDown);
@@ -120,14 +111,119 @@
             $(window).bind('mouseup', imgMouseUp);
         };
         obj.image.src = options.imgSrc;
-        el.on('remove', function(){$(window).unbind('mouseup', imgMouseUp)});
+        el.on('remove', function(){ $(window).unbind('mouseup', imgMouseUp); });
 
         return obj;
-    };
+    },
+    methods = {
+              
+        resizeThumbBox: function(th, options) {
+            th.find('.thumbBox').css({
+                width: options.width,
+                height: options.height,
+                marginTop: options.marginTop || options.height / 2 * -1 ,
+                marginLeft: options.marginLeft || options.width / 2 * -1
+            });
+        },
+        resizeImageBox: function(th, options) {
+            th.find('.imageBox').css({
+                width: options.width,
+                height: options.height
+            });
+        }
+    };   
+            
+    $.fn.cropbox = function(options) {  
+        var th = $(this),  
+            crop = 1,
+            indexSetting = 0,
+            maxIndexSetting = options.cropSettings.length - 1,
+            messages = typeof options.messages === 'undefined' ? false : options.messages;
 
-    jQuery.fn.cropbox = function(options){
-        return new cropbox(options, this);
+        methods.resizeImageBox(th, {
+            width: options.boxWidth,
+            height: options.boxHeight
+        });
+        methods.resizeThumbBox(th, {
+            width: options.cropSettings[indexSetting].width,
+            height: options.cropSettings[indexSetting].height,
+            marginTop: options.cropSettings[indexSetting].marginTop,
+            marginLeft: options.cropSettings[indexSetting].marginLeft
+        });
+        
+        if (messages) {
+            th.find('.message').html(messages[indexSetting]);
+        }
+
+        th.find('.file').on('change', function() {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                crop = new cropbox({
+                    imgSrc: e.target.result
+                }, th.find('.imageBox'));
+            };
+            reader.readAsDataURL(this.files[0]);
+        });
+        th.find('.btnCrop').on('click', function(){
+            if (typeof crop === 'undefined') {
+                return false;
+            }
+            var thumbWidth = options.cropSettings[indexSetting].width,
+                thumbHeight = options.cropSettings[indexSetting].height,
+                img = crop.getDataURL(thumbWidth, thumbHeight),
+                info = crop.getInfo(thumbWidth, thumbHeight);
+
+            if (th.find('.cropped img:eq(' + indexSetting + ')').length) {
+                th.find('.cropped img:eq(' + indexSetting + ')').attr('src',img);
+            } else {
+                th.find('.cropped').append($('<img>', {
+                    class: 'img-thumbnail',
+                    src: img
+                }));    
+            }
+            
+            var cropInfo = $('#' + options.idCropInfo).val();
+            if (!cropInfo) {
+                cropInfo = [];
+            } else {
+                cropInfo = JSON.parse(cropInfo);
+            }
+            cropInfo[indexSetting] = {
+                x: info.dx,
+                y: info.dy,
+                dw: info.dw,
+                dh: info.dh,
+                ratio: info.ratio
+            };
+            $('#' + options.idCropInfo).val(JSON.stringify(cropInfo));
+            
+            ++indexSetting;
+            if (indexSetting > maxIndexSetting) {
+                indexSetting = 0;
+            }
+            methods.resizeThumbBox(th, {
+                width: options.cropSettings[indexSetting].width,
+                height: options.cropSettings[indexSetting].height,
+                marginTop: options.cropSettings[indexSetting].marginTop,
+                marginLeft: options.cropSettings[indexSetting].marginLeft
+            });
+            
+            if (messages) {
+                th.find('.message').html(messages[indexSetting]);
+            }
+        });
+        th.find('.btnZoomIn').on('click', function(){
+            if (typeof crop !== 'undefined') {
+                crop.zoomIn();
+            }
+        });
+        th.find('.btnZoomOut').on('click', function(){
+            if (typeof crop !== 'undefined') {
+                crop.zoomOut();
+            }
+        });
     };
+    
 }));
 
 
