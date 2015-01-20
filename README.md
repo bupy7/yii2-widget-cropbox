@@ -5,6 +5,15 @@ This is widget wrapper and fork of Cropbox https://github.com/hongkhanh/cropbox 
 
 ![Screenshot](screenshot.png)
 
+##Functional
+
+- Simple! =)
+- Cropping image before upload to server.
+- Cropping more **one** image.
+- Labels for settings of crop.
+- You can use custom view.
+
+
 ##Installation
 The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
 
