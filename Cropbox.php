@@ -133,7 +133,7 @@ JS;
     
     public function run()
     {
-        return $this->render('field', [
+        return $this->render($this->pathToView, [
             'idWidget' => $this->id,
             'model' => $this->model,
             'attribute' => $this->attribute,
