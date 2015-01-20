@@ -110,7 +110,7 @@ public function afterSave()
     // open image
     $image = Image::getImagine()->open($this->image->tempName);
     
-    // rendering information about crop of ONE image 
+    // rendering information about crop of ONE option 
     $cropInfo = Json::decode($this->crop_info[0]);
     $cropInfo['dw'] = (int)$cropInfo['dw']; //new width image
     $cropInfo['dh'] = (int)$cropInfo['dh']; //new height image
@@ -242,7 +242,7 @@ $image->crop($cropPointLarge, $cropSizeLarge)
     ->save($pathLargeImage, ['quality' => $module->qualityLarge]);
 ```
 
-####Cropping more one image
+####Cropping more one option
 
 View: 
 
