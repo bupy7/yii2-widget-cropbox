@@ -45,6 +45,10 @@ Add to view
 ```php
 use bupy7\cropbox\Cropbox;
 
+$form = ActiveForm::begin([
+    'options' => ['enctype'=>'multipart/form-data'],
+]);
+
 ...
 
 echo $form->field($model, 'image')->widget(Cropbox::className(), [
