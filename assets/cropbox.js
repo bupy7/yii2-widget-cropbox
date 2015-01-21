@@ -130,6 +130,22 @@
                 width: options.width,
                 height: options.height
             });
+        },
+        clear: function(th) {
+            th.find('.btnCrop').addClass('disabled');
+            th.find('.btnZoomIn').addClass('disabled');
+            th.find('.btnZoomOut').addClass('disabled');
+            th.find('.imageBox').hide();
+            th.find('.message').hide();
+        },
+        init: function(th, options) {
+            th.find('.btnCrop').removeClass('disabled');
+            th.find('.btnZoomIn').removeClass('disabled');
+            th.find('.btnZoomOut').removeClass('disabled');
+            th.find('.imageBox').show();
+            th.find('.cropped').html('');
+            th.find('.message').show();
+            $('#' + options.idCropInfo).val('');
         }
     };   
             
@@ -139,6 +155,8 @@
             indexSetting = 0,
             maxIndexSetting = options.cropSettings.length - 1,
             messages = typeof options.messages === 'undefined' ? false : options.messages;
+
+        methods.clear(th);
 
         methods.resizeImageBox(th, {
             width: options.boxWidth,
@@ -163,6 +181,8 @@
                 }, th.find('.imageBox'));
             };
             reader.readAsDataURL(this.files[0]);
+            
+            methods.init(th, {idCropInfo: options.idCropInfo});
         });
         th.find('.btnCrop').on('click', function(){
             if (typeof crop === 'undefined') {
@@ -173,14 +193,10 @@
                 img = crop.getDataURL(thumbWidth, thumbHeight),
                 info = crop.getInfo(thumbWidth, thumbHeight);
 
-            if (th.find('.cropped img:eq(' + indexSetting + ')').length) {
-                th.find('.cropped img:eq(' + indexSetting + ')').attr('src',img);
-            } else {
-                th.find('.cropped').append($('<img>', {
-                    class: 'img-thumbnail',
-                    src: img
-                }));    
-            }
+            th.find('.cropped').append($('<img>', {
+                class: 'img-thumbnail',
+                src: img
+            }));    
             
             var cropInfo = $('#' + options.idCropInfo).val();
             if (!cropInfo) {
@@ -200,6 +216,7 @@
             ++indexSetting;
             if (indexSetting > maxIndexSetting) {
                 indexSetting = 0;
+                methods.clear(th);
             }
             methods.resizeThumbBox(th, {
                 width: options.cropSettings[indexSetting].width,
