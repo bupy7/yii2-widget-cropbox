@@ -111,7 +111,7 @@ public function afterSave()
     $image = Image::getImagine()->open($this->image->tempName);
     
     // rendering information about crop of ONE option 
-    $cropInfo = Json::decode($this->crop_info[0]);
+    $cropInfo = Json::decode($this->crop_info)[0];
     $cropInfo['dw'] = (int)$cropInfo['dw']; //new width image
     $cropInfo['dh'] = (int)$cropInfo['dh']; //new height image
     $cropInfo['x'] = abs($cropInfo['x']); //begin position of frame crop by X
@@ -225,7 +225,7 @@ The difference from previous methods in that we do not resize of image before cr
 For this we will use of property `ratio` from `$cropInfo`.
 
 ```php
-$cropInfo = Json::decode($this->crop_info[0]);
+$cropInfo = Json::decode($this->crop_info)[0];
 $cropInfo['dw'] = (int)$cropInfo['dw'];
 $cropInfo['dh'] = (int)$cropInfo['dh'];
 $cropInfo['x'] = abs($cropInfo['x']);
@@ -292,8 +292,8 @@ public function afterSave()
             'height' => 200,
         ],
     ];
-    for($i = 0; $i != count($this->crop_info[$i]); $i++) {
-        $cropInfo = Json::decode($this->crop_info[$i]);
+    for($i = 0; $i != count(Json::decode($this->crop_info)); $i++) {
+        $cropInfo = Json::decode($this->crop_info)[$i];
         $cropInfo['dw'] = (int)$cropInfo['dw']; //new width image
         $cropInfo['dh'] = (int)$cropInfo['dh']; //new height image
         $cropInfo['x'] = abs($cropInfo['x']); //begin position of frame crop by X
