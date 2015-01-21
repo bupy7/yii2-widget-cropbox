@@ -35,7 +35,7 @@ use bupy7\cropbox\Cropbox;
         if (is_array($previewUrl) && !empty($previewUrl))
         {
             foreach ($previewUrl as $url) {
-                echo Html::img($previewUrl, ['class' => 'img-thumbnail']);
+                echo Html::img($url, ['class' => 'img-thumbnail']);
             }
         }
         ?>
