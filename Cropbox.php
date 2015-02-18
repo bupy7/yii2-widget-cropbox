@@ -103,14 +103,14 @@ class Cropbox extends InputWidget
     public $originalUrl;
     
     /**
-     * @mixed Link to images for display before upload to preview URL.
+     * @var mixed Link to images for display before upload to preview URL.
      * Example:
      * [
      *      '/uploads/1.png',
      *      '/uploads/2.png',
      * ];
      * 
-     * or simply string to image without.
+     * or simply string to image.
      */
     public $previewUrl;
     
@@ -158,7 +158,7 @@ JS;
             'idWidget' => $this->id,
             'model' => $this->model,
             'attribute' => $this->attribute,
-            'previewUrl' => $this->previewUrl,
+            'previewUrl' => (array)$this->previewUrl,
             'originalUrl' => $this->originalUrl,
             'options' => $this->options,
             'attributeCropInfo' => $this->attributeCropInfo,
