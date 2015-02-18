@@ -32,7 +32,7 @@ use bupy7\cropbox\Cropbox;
                 'class' => 'btn btn-info',
             ]);
         }
-        if (is_array($previewUrl) && !empty($previewUrl))
+        if (!empty($previewUrl))
         {
             foreach ($previewUrl as $url) {
                 echo Html::img($url, ['class' => 'img-thumbnail']);
