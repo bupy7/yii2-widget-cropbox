@@ -14,7 +14,7 @@ use yii\helpers\Json;
  * GitHub repository this widget: https://github.com/bupy7/yii2-cropbox
  * 
  * @author Vasilij "BuPy7" Belosludcev http://mihaly4.ru
- * @version 2.1.1
+ * @version 2.2
  */
 class Cropbox extends InputWidget
 {
