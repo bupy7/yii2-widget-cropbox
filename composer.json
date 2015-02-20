@@ -1,6 +1,6 @@
 {
     "name": "bupy7/yii2-widget-cropbox",
-    "description": "This is widget wrapper and fork of Cropbox https://github.com/hongkhanh/cropbox . This widget allows crop image before upload to server and send informations about crop in JSON format.",
+    "description": "This is widget wrapper of Cropbox https://github.com/hongkhanh/cropbox and it modification. This widget allows crop image before upload to server and send informations about crop in JSON format.",
     "keywords": ["yii2", "extension", "widget", "crop image", "image"],
     "homepage": "https://github.com/bupy7/yii2-widget-cropbox",
     "type": "yii2-extension",
@@ -14,7 +14,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php":">=5.4.0"
+        "yiisoft/yii2-bootstrap": "@dev"
     },
     "autoload": {
         "psr-4": {
