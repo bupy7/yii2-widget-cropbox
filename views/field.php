@@ -38,7 +38,8 @@ Icon::map($this, Icon::FA);
                     'pluginOptions' => [
                         'orientation' => 'horizontal',
                         'handle' => 'round',
-                        'step' => 1
+                        'step' => 1,
+                        'tooltip' => 'hide',
                     ],
                     'pluginEvents' => [
                         'slide' => "function(e) {
@@ -58,7 +59,8 @@ Icon::map($this, Icon::FA);
                     'pluginOptions' => [
                         'orientation' => 'horizontal',
                         'handle' => 'round',
-                        'step' => 1
+                        'step' => 1,
+                        'tooltip' => 'hide',
                     ],
                     'pluginEvents' => [
                         'slide' => "function(e) {
