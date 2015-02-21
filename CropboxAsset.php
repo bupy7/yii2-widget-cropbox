@@ -1,7 +1,6 @@
 <?php
 namespace bupy7\cropbox;
 
-use Yii;
 use yii\web\AssetBundle;
 
 class CropboxAsset extends AssetBundle
@@ -17,6 +16,8 @@ class CropboxAsset extends AssetBundle
     public $depends = [
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapPluginAsset',
+        'kartik\slider\SliderAsset',
+        'kartik\icons\FontAwesomeAsset',
     ];
     
 }

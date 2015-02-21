@@ -3,6 +3,7 @@
  * 
  * @author Nguyen Hong Khanh https://github.com/hongkhanh
  * @author Belosludcev Vasilij https://github.com/bupy7
+ * @version 3.0
  */
 
 "use strict";
@@ -117,17 +118,39 @@
               
         resizeThumbBox: function($th, options) {
             $th.find('.thumbBox').css({
-                width: options.width,
-                height: options.height,
-                marginTop: options.marginTop || options.height / 2 * -1 ,
-                marginLeft: options.marginLeft || options.width / 2 * -1
+                width:      options.width,
+                height:     options.height,
+                marginTop:  options.height / 2 * -1,
+                marginLeft: options.width / 2 * -1
             });
         },
         resizeImageBox: function($th, options) {
             $th.find('.imageBox').css({
-                width: options.width,
+                width:  options.width,
                 height: options.height
             });
+        },
+        setMinMaxSlider: function($th, options) {
+            if (typeof options.width.min != 'undefined' && typeof options.width.max != 'undefined') {
+                var $input = $('input[name="' + $th.attr('id') + '_cbox_resize_width"]');
+                $input.slider('setAttribute', 'min', options.width.min);
+                $input.slider('setAttribute', 'max', options.width.max);
+                $input.slider('setValue', $th.find('.thumbBox').width());
+                
+                $th.find('.resizeWidth').show();
+            } else {
+                $th.find('.resizeWidth').hide();
+            }
+            if (typeof options.height.min != 'undefined' && typeof options.height.max != 'undefined') {
+                var $input = $('input[name="' + $th.attr('id') + '_cbox_resize_height"]');
+                $input.slider('setAttribute', 'min', options.height.min);
+                $input.slider('setAttribute', 'max', options.height.max);
+                $input.slider('setValue', $th.find('.thumbBox').height());
+                
+                $th.find('.resizeHeight').show();
+            } else {
+                $th.find('.resizeHeight').hide();
+            }
         },
         clear: function($th) {
             $th.find('.btnCrop').addClass('disabled');
@@ -135,7 +158,8 @@
             $th.find('.btnZoomOut').addClass('disabled');
             $th.find('.imageBox').hide();
             $th.find('.message').hide();
-            $th.find('.resize').hide();
+            $th.find('.resizeWidth').hide();
+            $th.find('.resizeHeight').hide();
         },
         init: function($th, options) {
             $th.find('.btnCrop').removeClass('disabled');
@@ -144,29 +168,33 @@
             $th.find('.imageBox').show();
             $th.find('.cropped').html('');
             $th.find('.message').show();
-            $th.find('.resize').show();
             $('#' + options.idCropInfo).val('');
         }
+        
     };   
             
-    $.fn.cropbox = function(options) {  
-        var $th = $(this),  
-            crop = 1,
+    $.fn.cropbox = function(o) {  
+        var $th = $(this);
+        
+        if (methods[o]) {
+            var args = [$th];
+            return methods[o].apply(this, args.concat(Array.prototype.slice.call(arguments, 1)));
+        }
+        
+        var crop = null,
             indexSetting = 0,
-            maxIndexSetting = options.cropSettings.length - 1,
-            messages = typeof options.messages === 'undefined' ? false : options.messages;
+            maxIndexSetting = o.cropSettings.length - 1,
+            messages = typeof o.messages === 'undefined' ? false : o.messages;
 
         methods.clear($th);
 
         methods.resizeImageBox($th, {
-            width: options.boxWidth,
-            height: options.boxHeight
+            width:  o.boxWidth,
+            height: o.boxHeight
         });
         methods.resizeThumbBox($th, {
-            width: options.cropSettings[indexSetting].width,
-            height: options.cropSettings[indexSetting].height,
-            marginTop: options.cropSettings[indexSetting].marginTop,
-            marginLeft: options.cropSettings[indexSetting].marginLeft
+            width:      o.cropSettings[indexSetting].width,
+            height:     o.cropSettings[indexSetting].height
         });
         
         if (messages) {
@@ -182,48 +210,69 @@
             };
             reader.readAsDataURL(this.files[0]);
             
-            methods.init($th, {idCropInfo: options.idCropInfo});
+            methods.setMinMaxSlider($th, {
+                width: {
+                    min: o.cropSettings[indexSetting].minWidth,
+                    max: o.cropSettings[indexSetting].maxWidth
+                },
+                height: {
+                    min: o.cropSettings[indexSetting].minHeight,
+                    max: o.cropSettings[indexSetting].maxHeight
+                }
+            });         
+            methods.init($th, {idCropInfo: o.idCropInfo});
         });
         $th.find('.btnCrop').on('click', function(){
             if (typeof crop === 'undefined') {
                 return false;
             }
-            var thumbWidth = options.cropSettings[indexSetting].width,
-                thumbHeight = options.cropSettings[indexSetting].height,
-                img = crop.getDataURL(thumbWidth, thumbHeight),
-                info = crop.getInfo(thumbWidth, thumbHeight);
+            var thumbWidth  = $th.find('.thumbBox').width(),
+                thumbHeight = $th.find('.thumbBox').height(),
+                img         = crop.getDataURL(thumbWidth, thumbHeight),
+                info        = crop.getInfo(thumbWidth, thumbHeight);
 
             $th.find('.cropped').append($('<img>', {
-                class: 'img-thumbnail',
-                src: img
+                class:  'img-thumbnail',
+                src:    img
             }));    
             
-            var cropInfo = $('#' + options.idCropInfo).val();
+            var cropInfo = $('#' + o.idCropInfo).val();
             if (!cropInfo) {
                 cropInfo = [];
             } else {
                 cropInfo = JSON.parse(cropInfo);
             }
             cropInfo[indexSetting] = {
-                x: info.dx,
-                y: info.dy,
-                dw: info.dw,
-                dh: info.dh,
-                ratio: info.ratio
+                x:      info.dx,
+                y:      info.dy,
+                dw:     info.dw,
+                dh:     info.dh,
+                ratio:  info.ratio,
+                w:      thumbWidth,
+                h:      thumbHeight
             };
-            $('#' + options.idCropInfo).val(JSON.stringify(cropInfo));
+            $('#' + o.idCropInfo).val(JSON.stringify(cropInfo));
             
             ++indexSetting;
             if (indexSetting > maxIndexSetting) {
                 indexSetting = 0;
                 methods.clear($th);
+            } else {
+                methods.resizeThumbBox($th, {
+                    width:      o.cropSettings[indexSetting].width,
+                    height:     o.cropSettings[indexSetting].height
+                });
+                methods.setMinMaxSlider($th, {
+                    width: {
+                        min: o.cropSettings[indexSetting].minWidth,
+                        max: o.cropSettings[indexSetting].maxWidth
+                    },
+                    height: {
+                        min: o.cropSettings[indexSetting].minHeight,
+                        max: o.cropSettings[indexSetting].maxHeight
+                    }
+                }); 
             }
-            methods.resizeThumbBox($th, {
-                width: options.cropSettings[indexSetting].width,
-                height: options.cropSettings[indexSetting].height,
-                marginTop: options.cropSettings[indexSetting].marginTop,
-                marginLeft: options.cropSettings[indexSetting].marginLeft
-            });
             
             if (messages) {
                 $th.find('.message').html(messages[indexSetting]);

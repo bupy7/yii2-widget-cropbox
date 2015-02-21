@@ -5,6 +5,7 @@ use Yii;
 use yii\widgets\InputWidget;
 use yii\helpers\Html;
 use yii\helpers\Json;
+use yii\base\InvalidConfigException;
 
 /**
  * Class file CropboxWidget.
@@ -14,7 +15,7 @@ use yii\helpers\Json;
  * GitHub repository this widget: https://github.com/bupy7/yii2-cropbox
  * 
  * @author Vasilij "BuPy7" Belosludcev http://mihaly4.ru
- * @version 2.2
+ * @version 3.0
  */
 class Cropbox extends InputWidget
 {
@@ -29,13 +30,17 @@ class Cropbox extends InputWidget
      *          "dw":372,
      *          "dh":232,
      *          "ratio":0.5314410000000002
+     *          "w":400,
+     *          "h":300
      *      },
      *      {
      *          "x":-136,
      *          "y":-67,
      *          "dw":372,
      *          "dh":232,
-     *          "ratio":0.5314410000000002
+     *          "ratio":0.5314410000000002,
+     *          "w":400,
+     *          "h":300
      *      }
      * ]
      * 
@@ -44,6 +49,8 @@ class Cropbox extends InputWidget
      * @property int $dw Width image after resize.
      * @property int $dh Height image after resize.
      * @property float $ratio Ratio.
+     * @property int $w Width of cropped image.
+     * @property int $h Height of cropped image.
      */
     public $attributeCropInfo;
     
@@ -54,10 +61,12 @@ class Cropbox extends InputWidget
      * @property int $boxHeight Height of box for thumb image. By default 300.
      * @property array $cropSettings
      * [
-     *      int $width Width of thumbBox. By default 200.
-     *      int $heiht Height of thumbBox. By default 200.
-     *      int $marginTop Property margin-top of thumbBox. By default center.
-     *      int $marginLeft Property margin-left of thumbBox. By default center.
+     *      int $width: Width of thumbBox. By default 200.
+     *      int $heiht: Height of thumbBox. By default 200.
+     *      int $minHeight: Min height of thumbBox. By default not used.
+     *      int $maxHeight: Max height of thumbBox. By default not used.
+     *      int $minWidth: Min width of thumbBox. By default not used.
+     *      int $maxWidth: Max width of thumbBox. By default not used.
      * ]
      * @property array $messages Array with messages for croppping options. 
      *
@@ -94,6 +103,21 @@ class Cropbox extends InputWidget
      *          ],
      *      ],
      * ]
+     * 
+     * Also to "cropSettings" you can pointer "maxHeight", "minHeight" and "maxWidth" and "maxWidth" for each 
+     * cropping options if $resizeHeight or $resizeWidth is "true". Example:
+     * [
+     *      'cropSettings' => [
+     *          [
+     *              'width' => 350,
+     *              'height' => 400,
+     *              'minHeight' => 200,
+     *              'maxHeight' => 420,
+     *          ],
+     *          //and etc.
+     *      ],
+     * ]
+     * If you want resizing cropping area then you need uses both property for height or width.
      */
     public $optionsCropbox = [];
     
@@ -120,13 +144,22 @@ class Cropbox extends InputWidget
      */
     public $pathToView = 'field';
     
-    public $resizeHeight = true;
-    
-    public $resizeWidth = false;
-    
     public function init()
     {
         parent::init();
+        
+        foreach ($this->optionsCropbox['cropSettings'] as $option) {
+            if (isset($option['minHeight']) || isset($option['maxHeight'])) {
+                if (!(isset($option['minHeight']) && isset($option['maxHeight']))) {
+                    throw new InvalidConfigException('The property "minHeight" and "maxHeight" must be setting both for resizing cropping area.');
+                }
+            }
+            if (isset($option['minWidth']) || isset($option['maxWidth'])) {
+                if (!(isset($option['minWidth']) && isset($option['maxWidth']))) {
+                     throw new InvalidConfigException('The property "minWidth" and "maxWidth" must be setting both for resizing cropping area.');
+                }
+            }
+        }
         
         CropboxAsset::register($this->view);
         $this->registerTranslations();
@@ -148,12 +181,8 @@ class Cropbox extends InputWidget
         
         $optionsCropbox = Json::encode($this->optionsCropbox);
         
-        $js = <<<JS
-(function($){
-    $('#{$this->id}').cropbox({$optionsCropbox});
-})(jQuery);               
-JS;
-        $this->view->registerJs($js, \yii\web\View::POS_END);
+        $js = "$('#{$this->id}').cropbox({$optionsCropbox});";
+        $this->view->registerJs($js, \yii\web\View::POS_READY);
     }
     
     public function run()
@@ -166,8 +195,6 @@ JS;
             'originalUrl' => $this->originalUrl,
             'options' => $this->options,
             'attributeCropInfo' => $this->attributeCropInfo,
-            'resizeHeight' => $this->resizeHeight,
-            'resizeWidth' => $this->resizeWidth,
         ]);
     }
     

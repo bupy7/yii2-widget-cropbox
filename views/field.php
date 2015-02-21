@@ -27,14 +27,12 @@ Icon::map($this, Icon::FA);
         ]);
         ?>
     </div>
-    <?php if ($resizeHeight || $resizeWidth) : ?>
-    <div class="form-horizontal resize">
-        <?php if ($resizeHeight) : ?>
-        <div class="form-group">
-            <label for="cbox_resize_height" class="col-md-2"><?= Cropbox::t('Height'); ?></label>
-            <div class="col-md-3">
+    <div class="form-horizontal">
+        <div class="form-group resizeWidth">
+            <label for="<?= $idWidget; ?>_cbox_resize_width" class="col-md-3"><?= Cropbox::t('Width'); ?></label>
+            <div class="col-md-6">
                 <?= Slider::widget([
-                    'name' => 'cbox_resize_height',
+                    'name' => $idWidget . '_cbox_resize_width',
                     'sliderColor' => Slider::TYPE_GREY,
                     'handleColor' => Slider::TYPE_PRIMARY,
                     'pluginOptions' => [
@@ -42,16 +40,19 @@ Icon::map($this, Icon::FA);
                         'handle' => 'round',
                         'step' => 1
                     ],
+                    'pluginEvents' => [
+                        'slide' => "function(e) {
+                            $('#{$idWidget}').cropbox('resizeThumbBox', {width: e.value});
+                        }",
+                    ],
                 ]); ?>
             </div>
         </div>
-        <?php endif; ?>
-        <?php if ($resizeWidth) : ?>
-        <div class="form-group">
-            <label for="cbox_resize_width" class="col-md-2"><?= Cropbox::t('Width'); ?></label>
-            <div class="col-md-3">
+        <div class="form-group resizeHeight">
+            <label for="<?= $idWidget; ?>_cbox_resize_height" class="col-md-3"><?= Cropbox::t('Height'); ?></label>
+            <div class="col-md-6">
                 <?= Slider::widget([
-                    'name' => 'cbox_resize_width',
+                    'name' => $idWidget . '_cbox_resize_height',
                     'sliderColor' => Slider::TYPE_GREY,
                     'handleColor' => Slider::TYPE_PRIMARY,
                     'pluginOptions' => [
@@ -59,12 +60,15 @@ Icon::map($this, Icon::FA);
                         'handle' => 'round',
                         'step' => 1
                     ],
+                    'pluginEvents' => [
+                        'slide' => "function(e) {
+                            $('#{$idWidget}').cropbox('resizeThumbBox', {height: e.value});
+                        }",
+                    ],
                 ]); ?>
             </div>
         </div>
-        <?php endif; ?>
     </div>
-    <?php endif; ?>
     <div class="cropped">
         <?php
         if (is_string($originalUrl) && !empty($originalUrl))
