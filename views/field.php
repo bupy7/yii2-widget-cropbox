@@ -1,6 +1,10 @@
 <?php
 use yii\helpers\Html;
 use bupy7\cropbox\Cropbox;
+use kartik\slider\Slider;
+use kartik\icons\Icon;
+
+Icon::map($this, Icon::FA);
 ?>
 <div id="<?= $idWidget; ?>" class="cropbox">
     <div class="imageBox">
@@ -9,25 +13,63 @@ use bupy7\cropbox\Cropbox;
     <p class="message"></p>
     <div class="btn-group">
         <span class="btn btn-primary btn-file">
-            <?= Cropbox::t('Browse') . Html::activeFileInput($model, $attribute, $options); ?>
+            <?= Icon::show('folder-open') . Cropbox::t('Browse') . Html::activeFileInput($model, $attribute, $options); ?>
         </span>
         <?php
-        echo Html::button('+', array(
+        echo Html::button(Icon::show('expand '), [
             'class' => 'btn btn-default btnZoomIn',
-        ));
-        echo Html::button('-', array(
+        ]);
+        echo Html::button(Icon::show('compress'), [
             'class' => 'btn btn-default btnZoomOut',
-        ));
-        echo Html::button(Cropbox::t('Crop'), array(
+        ]);
+        echo Html::button(Icon::show('crop') . Cropbox::t('Crop'), [
             'class' => 'btn btn-success btnCrop',
-        ));
+        ]);
         ?>
     </div>
+    <?php if ($resizeHeight || $resizeWidth) : ?>
+    <div class="form-horizontal resize">
+        <?php if ($resizeHeight) : ?>
+        <div class="form-group">
+            <label for="cbox_resize_height" class="col-md-2"><?= Cropbox::t('Height'); ?></label>
+            <div class="col-md-3">
+                <?= Slider::widget([
+                    'name' => 'cbox_resize_height',
+                    'sliderColor' => Slider::TYPE_GREY,
+                    'handleColor' => Slider::TYPE_PRIMARY,
+                    'pluginOptions' => [
+                        'orientation' => 'horizontal',
+                        'handle' => 'round',
+                        'step' => 1
+                    ],
+                ]); ?>
+            </div>
+        </div>
+        <?php endif; ?>
+        <?php if ($resizeWidth) : ?>
+        <div class="form-group">
+            <label for="cbox_resize_width" class="col-md-2"><?= Cropbox::t('Width'); ?></label>
+            <div class="col-md-3">
+                <?= Slider::widget([
+                    'name' => 'cbox_resize_width',
+                    'sliderColor' => Slider::TYPE_GREY,
+                    'handleColor' => Slider::TYPE_PRIMARY,
+                    'pluginOptions' => [
+                        'orientation' => 'horizontal',
+                        'handle' => 'round',
+                        'step' => 1
+                    ],
+                ]); ?>
+            </div>
+        </div>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
     <div class="cropped">
         <?php
         if (is_string($originalUrl) && !empty($originalUrl))
         {
-            echo Html::a(Cropbox::t('Show original'), $originalUrl, [
+            echo Html::a(Icon::show('eye') . Cropbox::t('Show original'), $originalUrl, [
                 'target' => '_blank',
                 'class' => 'btn btn-info',
             ]);

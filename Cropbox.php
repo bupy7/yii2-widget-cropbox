@@ -120,6 +120,10 @@ class Cropbox extends InputWidget
      */
     public $pathToView = 'field';
     
+    public $resizeHeight = true;
+    
+    public $resizeWidth = false;
+    
     public function init()
     {
         parent::init();
@@ -162,6 +166,8 @@ JS;
             'originalUrl' => $this->originalUrl,
             'options' => $this->options,
             'attributeCropInfo' => $this->attributeCropInfo,
+            'resizeHeight' => $this->resizeHeight,
+            'resizeWidth' => $this->resizeWidth,
         ]);
     }
     
