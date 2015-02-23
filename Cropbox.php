@@ -159,6 +159,9 @@ class Cropbox extends InputWidget
                      throw new InvalidConfigException('The property "minWidth" and "maxWidth" must be setting both for resizing cropping area.');
                 }
             }
+            if (empty($option['height']) || empty($option['width'])) {
+                throw new InvalidConfigException('The property "width" and "height" is require.');
+            }
         }
         
         CropboxAsset::register($this->view);
