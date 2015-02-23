@@ -20,8 +20,6 @@
                 state:      {},
                 ratio:      1,
                 options:    options,
-                imageBox:   $th,
-                thumbBox:   $th.find('.thumbBox'),
                 image:      new Image(),
                 
                 getDataURL: function (thumbWidth, thumbHeight) {
@@ -110,7 +108,6 @@
             $(window).bind('mouseup', imgMouseUp);
         };
         obj.image.src = options.imgSrc;
-        $th.on('remove', function(){ $(window).unbind('mouseup', imgMouseUp); });
 
         return obj;
     },
@@ -135,7 +132,7 @@
                 var $input = $('input[name="' + $th.attr('id') + '_cbox_resize_width"]');
                 $input.slider('setAttribute', 'min', options.width.min);
                 $input.slider('setAttribute', 'max', options.width.max);
-                $input.slider('setValue', $th.find('.thumbBox').width());
+                $input.slider('setValue', $th.find('.thumbBox').outerWidth());
                 
                 $th.find('.resizeWidth').show();
             } else {
@@ -145,7 +142,7 @@
                 var $input = $('input[name="' + $th.attr('id') + '_cbox_resize_height"]');
                 $input.slider('setAttribute', 'min', options.height.min);
                 $input.slider('setAttribute', 'max', options.height.max);
-                $input.slider('setValue', $th.find('.thumbBox').height());
+                $input.slider('setValue', $th.find('.thumbBox').outerHeight());
                 
                 $th.find('.resizeHeight').show();
             } else {
@@ -226,8 +223,8 @@
             if (typeof crop === 'undefined') {
                 return false;
             }
-            var thumbWidth  = $th.find('.thumbBox').width(),
-                thumbHeight = $th.find('.thumbBox').height(),
+            var thumbWidth  = $th.find('.thumbBox').outerWidth(),
+                thumbHeight = $th.find('.thumbBox').outerHeight(),
                 img         = crop.getDataURL(thumbWidth, thumbHeight),
                 info        = crop.getInfo(thumbWidth, thumbHeight);
 
@@ -291,5 +288,3 @@
     };
     
 }));
-
-
