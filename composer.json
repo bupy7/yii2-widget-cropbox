@@ -16,7 +16,7 @@
     "require": {
         "yiisoft/yii2-bootstrap": "@dev",
         "kartik-v/yii2-slider": "*",
-        "kartik-v/yii2-icons": "dev-master"
+        "kartik-v/yii2-icons": "*"
     },
     "autoload": {
         "psr-4": {
