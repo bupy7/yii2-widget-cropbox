@@ -12,11 +12,11 @@
             "homepage": "http://mihaly4.ru"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {
         "yiisoft/yii2-bootstrap": "@dev",
         "kartik-v/yii2-slider": "*",
-        "kartik-v/yii2-icons": "*"
+        "kartik-v/yii2-icons": "dev-master"
     },
     "autoload": {
         "psr-4": {
