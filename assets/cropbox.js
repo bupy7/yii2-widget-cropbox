@@ -3,7 +3,7 @@
  * 
  * @author Nguyen Hong Khanh https://github.com/hongkhanh
  * @author Belosludcev Vasilij https://github.com/bupy7
- * @version 3.0
+ * @version 3.0.1
  */
 
 "use strict";
