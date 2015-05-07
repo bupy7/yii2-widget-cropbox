@@ -105,7 +105,7 @@
 
             $th.bind('mousedown', imgMouseDown);
             $th.bind('mousemove', imgMouseMove);
-            $(window).bind('mouseup', imgMouseUp);
+            $th.bind('mouseup', imgMouseUp);
         };
         obj.image.src = options.imgSrc;
 
