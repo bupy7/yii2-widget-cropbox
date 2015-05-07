@@ -20,12 +20,12 @@ The preferred way to install this extension is through [composer](http://getcomp
 
 Either run
 ```
-$ php composer.phar require bupy7/yii2-widget-cropbox "3.*"
+$ php composer.phar require --prefer-dist bupy7/yii2-widget-cropbox "*"
 ```
 
 or add
 ```
-"bupy7/yii2-widget-cropbox": "3.*"
+"bupy7/yii2-widget-cropbox": "*"
 ```
 
 to the **require** section of your **composer.json** file.
