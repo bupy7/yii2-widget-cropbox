@@ -1,4 +1,6 @@
-div.cropbox .imageBox {
+@charset "UTF-8";
+
+div.cropbox .image-box {
     position: relative;
     border: 1px solid #aaa;
     background: #fff;
@@ -6,7 +8,7 @@ div.cropbox .imageBox {
     background-repeat: no-repeat;
     cursor: move;
 }
-div.cropbox .imageBox .thumbBox {
+div.cropbox .image-box .thumb-box {
     position: absolute;
     left: 50%;
     top: 50%;

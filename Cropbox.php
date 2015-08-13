@@ -1,4 +1,5 @@
 <?php
+
 namespace bupy7\cropbox;
 
 use Yii;
@@ -6,6 +7,8 @@ use yii\widgets\InputWidget;
 use yii\helpers\Html;
 use yii\helpers\Json;
 use yii\base\InvalidConfigException;
+use yii\web\View;
+use yii\web\JsExpression;
 
 /**
  * Class file CropboxWidget.
@@ -15,11 +18,10 @@ use yii\base\InvalidConfigException;
  * GitHub repository this widget: https://github.com/bupy7/yii2-cropbox
  * 
  * @author Vasilij "BuPy7" Belosludcev http://mihaly4.ru
- * @version 3.0
+ * @since 1.0.0
  */
 class Cropbox extends InputWidget
 {
-    
     /**
      * @var array Attribute name where will be crop information in JSON format. 
      * After cropping image all information will be added with uses key from $optionsCropbox.
@@ -53,9 +55,8 @@ class Cropbox extends InputWidget
      * @property int $h Height of cropped image.
      */
     public $attributeCropInfo;
-    
     /**
-     * @var array Cropbox options.
+     * @var array Plugin options.
      * 
      * @property int $boxWidth Width of box for thumb image. By default 300.
      * @property int $boxHeight Height of box for thumb image. By default 300.
@@ -119,13 +120,11 @@ class Cropbox extends InputWidget
      * ]
      * If you want resizing cropping area then you need uses both property for height or width.
      */
-    public $optionsCropbox = [];
-    
+    public $pluginOptions = [];
     /**
      * @string Link to image for display before upload to original URL.
      */
     public $originalUrl;
-    
     /**
      * @var mixed Link to images for display before upload to preview URL.
      * Example:
@@ -137,85 +136,91 @@ class Cropbox extends InputWidget
      * or simply string to image.
      */
     public $previewUrl;
-    
     /**
      * @var string Path to view of cropbox field.
      * Example: '@app/path/to/view'
      */
     public $pathToView = 'field';
-    
+    /**
+     * @var array Callback of plugin events.
+     * - dontCrop: function(event) {
+     * }
+     */
+    public $pluginEvents = [];
+
     public function init()
     {
         parent::init();
-        
-        foreach ($this->optionsCropbox['cropSettings'] as $option) {
-            if (isset($option['minHeight']) || isset($option['maxHeight'])) {
-                if (!(isset($option['minHeight']) && isset($option['maxHeight']))) {
-                    throw new InvalidConfigException('The property "minHeight" and "maxHeight" must be setting both for resizing cropping area.');
+
+        if (empty($this->pluginOptions['cropSettings'])) {
+            $this->pluginOptions['cropSettings'][] = [
+                'width' => 200,
+                'height' => 200,
+            ];
+        } else {
+            foreach ($this->pluginOptions['cropSettings'] as $option) {
+                if (isset($option['minHeight']) || isset($option['maxHeight'])) {
+                    if (!(isset($option['minHeight']) && isset($option['maxHeight']))) {
+                        throw new InvalidConfigException('The property "minHeight" and "maxHeight" must be setting both for resizing cropping area.');
+                    }
                 }
-            }
-            if (isset($option['minWidth']) || isset($option['maxWidth'])) {
-                if (!(isset($option['minWidth']) && isset($option['maxWidth']))) {
-                     throw new InvalidConfigException('The property "minWidth" and "maxWidth" must be setting both for resizing cropping area.');
+                if (isset($option['minWidth']) || isset($option['maxWidth'])) {
+                    if (!(isset($option['minWidth']) && isset($option['maxWidth']))) {
+                        throw new InvalidConfigException('The property "minWidth" and "maxWidth" must be setting both for resizing cropping area.');
+                    }
                 }
-            }
-            if (empty($option['height']) || empty($option['width'])) {
-                throw new InvalidConfigException('The property "width" and "height" is require.');
+                if (empty($option['height']) || empty($option['width'])) {
+                    throw new InvalidConfigException('The property "width" and "height" is require.');
+                }
             }
         }
         
         CropboxAsset::register($this->view);
         $this->registerTranslations();
         
-        $this->optionsCropbox = array_merge([
+        $this->pluginOptions = array_merge([
             'boxWidth' => 300,
             'boxHeight' => 300,
-        ], $this->optionsCropbox);
-        if (!isset($this->optionsCropbox['cropSettings']) || empty($this->optionsCropbox['cropSettings'])) {
-            $this->optionsCropbox['cropSettings'][] = [
-                'width' => 200,
-                'height' => 200,
-            ];
-        }
-        $this->optionsCropbox['idCropInfo'] = Html::getInputId($this->model, $this->attributeCropInfo);
+        ], $this->pluginOptions);
+        $this->pluginOptions['idCropInfo'] = Html::getInputId($this->model, $this->attributeCropInfo);
         $this->options = array_merge([
             'class' => 'file',
         ], $this->options);
+        $optionsCropbox = Json::encode($this->pluginOptions);
+        $pluginEvents = [
+            'dontCrop' => new JsExpression('function(){}'),
+        ];
+        if (isset($this->pluginEvents['dontCrop'])) {
+            $pluginEvents['dontCrop'] = new JsExpression($this->pluginEvents['dontCrop']);
+        }
         
-        $optionsCropbox = Json::encode($this->optionsCropbox);
-        
-        $js = "$('#{$this->id}').cropbox({$optionsCropbox});";
-        $this->view->registerJs($js, \yii\web\View::POS_READY);
+        $js = <<<JS
+$('#{$this->id}')
+    .cropbox({$optionsCropbox})
+    .on('dontCrop', {$pluginEvents['dontCrop']});
+JS;
+        $this->view->registerJs($js, View::POS_READY);
     }
     
     public function run()
     {
-        return $this->render($this->pathToView, [
-            'idWidget' => $this->id,
-            'model' => $this->model,
-            'attribute' => $this->attribute,
-            'previewUrl' => (array)$this->previewUrl,
-            'originalUrl' => $this->originalUrl,
-            'options' => $this->options,
-            'attributeCropInfo' => $this->attributeCropInfo,
-        ]);
+        return $this->render($this->pathToView);
     }
     
     public function registerTranslations()
     {
-        Yii::$app->i18n->translations['bupy7/cropbox/*'] = [
+        Yii::$app->i18n->translations['bupy7/cropbox'] = [
             'class' => 'yii\i18n\PhpMessageSource',
             'sourceLanguage' => 'en',
             'basePath' => '@bupy7/cropbox/messages',
             'fileMap' => [
-                'bupy7/cropbox/core' => 'core.php',
+                'bupy7/cropbox' => 'core.php',
             ],
         ];
     }
-
+    
     public static function t($message, $params = [], $language = null)
     {
-        return Yii::t('bupy7/cropbox/core', $message, $params, $language);
+        return Yii::t('bupy7/cropbox', $message, $params, $language);
     }
-
 }

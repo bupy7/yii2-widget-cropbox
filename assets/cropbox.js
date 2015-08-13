@@ -3,7 +3,7 @@
  * 
  * @author Nguyen Hong Khanh https://github.com/hongkhanh
  * @author Belosludcev Vasilij https://github.com/bupy7
- * @version 3.0.1
+ * @since 1.0.0
  */
 
 "use strict";
@@ -23,12 +23,12 @@
                 image:      new Image(),
                 
                 getDataURL: function (thumbWidth, thumbHeight) {
-                    var canvas  = document.createElement("canvas"),
+                    var canvas  = document.createElement('canvas'),
                         info    = this.getInfo(thumbWidth, thumbHeight);
 
                     canvas.width = info.width;
                     canvas.height = info.height;
-                    var context = canvas.getContext("2d");
+                    var context = canvas.getContext('2d');
                     context.drawImage(this.image, 0, 0, info.sw, info.sh, info.dx, info.dy, info.dw, info.dh);
                     var imageData = canvas.toDataURL('image/png');
                     return imageData;
@@ -114,7 +114,7 @@
     methods = {
               
         resizeThumbBox: function($th, options) {
-            $th.find('.thumbBox').css({
+            $th.find('.thumb-box').css({
                 width:      options.width,
                 height:     options.height,
                 marginTop:  options.height / 2 * -1,
@@ -122,7 +122,7 @@
             });
         },
         resizeImageBox: function($th, options) {
-            $th.find('.imageBox').css({
+            $th.find('.image-box').css({
                 width:  options.width,
                 height: options.height
             });
@@ -132,37 +132,37 @@
                 var $input = $('input[name="' + $th.attr('id') + '_cbox_resize_width"]');
                 $input.slider('setAttribute', 'min', options.width.min);
                 $input.slider('setAttribute', 'max', options.width.max);
-                $input.slider('setValue', $th.find('.thumbBox').outerWidth());
+                $input.slider('setValue', $th.find('.thumb-box').outerWidth());
                 
-                $th.find('.resizeWidth').show();
+                $th.find('.resize-width').show();
             } else {
-                $th.find('.resizeWidth').hide();
+                $th.find('.resize-width').hide();
             }
             if (typeof options.height.min != 'undefined' && typeof options.height.max != 'undefined') {
                 var $input = $('input[name="' + $th.attr('id') + '_cbox_resize_height"]');
                 $input.slider('setAttribute', 'min', options.height.min);
                 $input.slider('setAttribute', 'max', options.height.max);
-                $input.slider('setValue', $th.find('.thumbBox').outerHeight());
+                $input.slider('setValue', $th.find('.thumb-box').outerHeight());
                 
-                $th.find('.resizeHeight').show();
+                $th.find('.resize-height').show();
             } else {
-                $th.find('.resizeHeight').hide();
+                $th.find('.resize-height').hide();
             }
         },
         clear: function($th) {
-            $th.find('.btnCrop').addClass('disabled');
-            $th.find('.btnZoomIn').addClass('disabled');
-            $th.find('.btnZoomOut').addClass('disabled');
-            $th.find('.imageBox').hide();
+            $th.find('.btn-crop').addClass('disabled');
+            $th.find('.btn-zoom-in').addClass('disabled');
+            $th.find('.btn-zoom-out').addClass('disabled');
+            $th.find('.image-box').hide();
             $th.find('.message').hide();
-            $th.find('.resizeWidth').hide();
-            $th.find('.resizeHeight').hide();
+            $th.find('.resize-width').hide();
+            $th.find('.resize-height').hide();
         },
         init: function($th, options) {
-            $th.find('.btnCrop').removeClass('disabled');
-            $th.find('.btnZoomIn').removeClass('disabled');
-            $th.find('.btnZoomOut').removeClass('disabled');
-            $th.find('.imageBox').show();
+            $th.find('.btn-crop').removeClass('disabled');
+            $th.find('.btn-zoom-in').removeClass('disabled');
+            $th.find('.btn-zoom-out').removeClass('disabled');
+            $th.find('.image-box').show();
             $th.find('.cropped').html('');
             $th.find('.message').show();
             $('#' + options.idCropInfo).val('');
@@ -203,7 +203,7 @@
             reader.onload = function(e) {
                 crop = new cropbox({
                     imgSrc: e.target.result
-                }, $th.find('.imageBox'));
+                }, $th.find('.image-box'));
             };
             reader.readAsDataURL(this.files[0]);
             
@@ -219,14 +219,19 @@
             });         
             methods.init($th, {idCropInfo: o.idCropInfo});
         });
-        $th.find('.btnCrop').on('click', function(){
+        $th.find('.btn-crop').on('click', function(){
             if (typeof crop === 'undefined') {
                 return false;
             }
-            var thumbWidth  = $th.find('.thumbBox').outerWidth(),
-                thumbHeight = $th.find('.thumbBox').outerHeight(),
+            var thumbWidth  = $th.find('.thumb-box').outerWidth(),
+                thumbHeight = $th.find('.thumb-box').outerHeight(),
                 img         = crop.getDataURL(thumbWidth, thumbHeight),
                 info        = crop.getInfo(thumbWidth, thumbHeight);
+
+            if (thumbWidth > info.dw || thumbHeight > info.dh) {
+                $th.trigger('dontCrop');
+                return false;
+            }
 
             $th.find('.cropped').append($('<img>', {
                 class:  'img-thumbnail',
@@ -275,16 +280,18 @@
                 $th.find('.message').html(messages[indexSetting]);
             }
         });
-        $th.find('.btnZoomIn').on('click', function(){
+        $th.find('.btn-zoom-in').on('click', function(){
             if (typeof crop !== 'undefined') {
                 crop.zoomIn();
             }
         });
-        $th.find('.btnZoomOut').on('click', function(){
+        $th.find('.btn-zoom-out').on('click', function(){
             if (typeof crop !== 'undefined') {
                 crop.zoomOut();
             }
         });
+        
+        return $th;
     };
     
 }));

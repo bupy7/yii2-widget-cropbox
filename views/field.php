@@ -1,38 +1,42 @@
 <?php
+
 use yii\helpers\Html;
 use bupy7\cropbox\Cropbox;
 use kartik\slider\Slider;
 use kartik\icons\Icon;
 
-Icon::map($this, Icon::FA);
+Icon::map($this, Icon::BSG);
 ?>
-<div id="<?= $idWidget; ?>" class="cropbox">
-    <div class="imageBox">
-        <div class="thumbBox"></div>
+<div id="<?= $this->context->id; ?>" class="cropbox">
+    <div class="image-box">
+        <div class="thumb-box"></div>
     </div>
     <p class="message"></p>
     <div class="btn-group">
         <span class="btn btn-primary btn-file">
-            <?= Icon::show('folder-open') . Cropbox::t('Browse') . Html::activeFileInput($model, $attribute, $options); ?>
+        <?= Icon::show('folder-open') 
+            . Cropbox::t('Browse') 
+            . Html::activeFileInput($this->context->model, $this->context->attribute, $this->context->options); ?>
         </span>
-        <?php
-        echo Html::button(Icon::show('expand '), [
-            'class' => 'btn btn-default btnZoomIn',
-        ]);
-        echo Html::button(Icon::show('compress'), [
-            'class' => 'btn btn-default btnZoomOut',
-        ]);
-        echo Html::button(Icon::show('crop') . Cropbox::t('Crop'), [
-            'class' => 'btn btn-success btnCrop',
-        ]);
-        ?>
+        <?= Html::button(Icon::show('expand'), [
+            'class' => 'btn btn-default btn-zoom-in',
+        ]); ?>
+        <?= Html::button(Icon::show('compress'), [
+            'class' => 'btn btn-default btn-zoom-out',
+        ]); ?>
+        <?= Html::button(Icon::show('crop') . Cropbox::t('Crop'), [
+            'class' => 'btn btn-success btn-crop',
+        ]); ?>
     </div>
     <div class="form-horizontal">
-        <div class="form-group resizeWidth">
-            <label for="<?= $idWidget; ?>_cbox_resize_width" class="col-md-3"><?= Cropbox::t('Width'); ?></label>
+        <div class="form-group resize-width">
+            <label for="<?= $this->context->id; ?>_cbox_resize_width" class="col-md-3">
+                <?= Cropbox::t('Width'); ?>
+            </label>
             <div class="col-md-6">
-                <?= Slider::widget([
-                    'name' => $idWidget . '_cbox_resize_width',
+                <?=
+                Slider::widget([
+                    'name' => $this->context->id . '_cbox_resize_width',
                     'sliderColor' => Slider::TYPE_GREY,
                     'handleColor' => Slider::TYPE_PRIMARY,
                     'pluginOptions' => [
@@ -43,17 +47,21 @@ Icon::map($this, Icon::FA);
                     ],
                     'pluginEvents' => [
                         'slide' => "function(e) {
-                            $('#{$idWidget}').cropbox('resizeThumbBox', {width: e.value});
+                            $('#{$this->context->id}').cropbox('resizeThumbBox', {width: e.value});
                         }",
                     ],
-                ]); ?>
+                ]);
+                ?>
             </div>
         </div>
-        <div class="form-group resizeHeight">
-            <label for="<?= $idWidget; ?>_cbox_resize_height" class="col-md-3"><?= Cropbox::t('Height'); ?></label>
+        <div class="form-group resize-height">
+            <label for="<?= $this->context->id; ?>_cbox_resize_height" class="col-md-3">
+                <?= Cropbox::t('Height'); ?>
+            </label>
             <div class="col-md-6">
-                <?= Slider::widget([
-                    'name' => $idWidget . '_cbox_resize_height',
+                <?=
+                Slider::widget([
+                    'name' => $this->context->id . '_cbox_resize_height',
                     'sliderColor' => Slider::TYPE_GREY,
                     'handleColor' => Slider::TYPE_PRIMARY,
                     'pluginOptions' => [
@@ -64,25 +72,24 @@ Icon::map($this, Icon::FA);
                     ],
                     'pluginEvents' => [
                         'slide' => "function(e) {
-                            $('#{$idWidget}').cropbox('resizeThumbBox', {height: e.value});
+                            $('#{$this->context->id}').cropbox('resizeThumbBox', {height: e.value});
                         }",
                     ],
-                ]); ?>
+                ]);
+                ?>
             </div>
         </div>
     </div>
     <div class="cropped">
         <?php
-        if (is_string($originalUrl) && !empty($originalUrl))
-        {
-            echo Html::a(Icon::show('eye') . Cropbox::t('Show original'), $originalUrl, [
+        if (is_string($this->context->originalUrl) && !empty($this->context->originalUrl)) {
+            echo Html::a(Icon::show('eye') . Cropbox::t('Show original'), $this->context->originalUrl, [
                 'target' => '_blank',
                 'class' => 'btn btn-info',
             ]);
         }
-        if (!empty($previewUrl))
-        {
-            foreach ($previewUrl as $url) {
+        if (!empty($this->context->previewUrl)) {
+            foreach ($this->context->previewUrl as $url) {
                 echo Html::img($url, ['class' => 'img-thumbnail']);
             }
         }
@@ -90,4 +97,4 @@ Icon::map($this, Icon::FA);
     </div>
 </div>
 <?php
-echo Html::activeHiddenInput($model, $attributeCropInfo);
+echo Html::activeHiddenInput($this->context->model, $this->context->attributeCropInfo);
