@@ -27,6 +27,9 @@ Icon::map($this, Icon::BSG);
         <?= Html::button(Icon::show('crop') . Cropbox::t('Crop'), [
             'class' => 'btn btn-success btn-crop',
         ]); ?>
+        <?= Html::button(Icon::show('crop') . Cropbox::t('Reset'), [
+            'class' => 'btn btn-warning btn-reset',
+        ]); ?>
     </div>
     <div class="form-horizontal">
         <div class="form-group resize-width">
@@ -83,7 +86,7 @@ Icon::map($this, Icon::BSG);
     <div class="cropped">
         <?php
         if (is_string($this->context->originalUrl) && !empty($this->context->originalUrl)) {
-            echo Html::a(Icon::show('eye') . Cropbox::t('Show original'), $this->context->originalUrl, [
+            echo Html::a(Icon::show('eye') . Cropbox::t('SHOW_ORIGINAL'), $this->context->originalUrl, [
                 'target' => '_blank',
                 'class' => 'btn btn-info',
             ]);

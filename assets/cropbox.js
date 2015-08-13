@@ -149,6 +149,17 @@
                 $th.find('.resize-height').hide();
             }
         },
+        reset: function($th, options) {
+            $th.find('.btn-crop').addClass('disabled');
+            $th.find('.btn-zoom-in').addClass('disabled');
+            $th.find('.btn-zoom-out').addClass('disabled');
+            $th.find('.image-box').hide();
+            $th.find('.message').hide();
+            $th.find('.resize-width').hide();
+            $th.find('.resize-height').hide();
+            $('#' + options.idCropInfo).val('');
+            $th.find('.cropped').html('');
+        },
         clear: function($th) {
             $th.find('.btn-crop').addClass('disabled');
             $th.find('.btn-zoom-in').addClass('disabled');
@@ -220,7 +231,7 @@
             methods.init($th, {idCropInfo: o.idCropInfo});
         });
         $th.find('.btn-crop').on('click', function(){
-            if (typeof crop === 'undefined') {
+            if (!crop) {
                 return false;
             }
             var thumbWidth  = $th.find('.thumb-box').outerWidth(),
@@ -281,14 +292,17 @@
             }
         });
         $th.find('.btn-zoom-in').on('click', function(){
-            if (typeof crop !== 'undefined') {
+            if (crop) {
                 crop.zoomIn();
             }
         });
         $th.find('.btn-zoom-out').on('click', function(){
-            if (typeof crop !== 'undefined') {
+            if (crop) {
                 crop.zoomOut();
             }
+        });
+        $th.find('.btn-reset').on('click', function() {
+            methods.reset($th, {idCropInfo: o.idCropInfo});
         });
         
         return $th;

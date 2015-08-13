@@ -143,11 +143,14 @@ class Cropbox extends InputWidget
     public $pathToView = 'field';
     /**
      * @var array Callback of plugin events.
-     * - dontCrop: function(event) {
-     * }
+     * - dontCrop: Event called when the image don't crop.
      */
     public $pluginEvents = [];
 
+    /**
+     * @inheritdoc
+     * @throws InvalidConfigException
+     */
     public function init()
     {
         parent::init();
@@ -202,12 +205,32 @@ JS;
         $this->view->registerJs($js, View::POS_READY);
     }
     
+    /**
+     * @inheritdoc
+     */
     public function run()
     {
         return $this->render($this->pathToView);
     }
+        
+    /**
+     * Translates a message to the specified language.
+     * 
+     * @param string $message the message to be translated.
+     * @param array $params the parameters that will be used to replace the corresponding placeholders in the message.
+     * @param string $language the language code (e.g. `en-US`, `en`). If this is null, the current of application
+     * language.
+     * @return string
+     */
+    public static function t($message, $params = [], $language = null)
+    {
+        return Yii::t('bupy7/cropbox', $message, $params, $language);
+    }
     
-    public function registerTranslations()
+    /**
+     * Registration of translation class.
+     */
+    protected function registerTranslations()
     {
         Yii::$app->i18n->translations['bupy7/cropbox'] = [
             'class' => 'yii\i18n\PhpMessageSource',
@@ -217,10 +240,5 @@ JS;
                 'bupy7/cropbox' => 'core.php',
             ],
         ];
-    }
-    
-    public static function t($message, $params = [], $language = null)
-    {
-        return Yii::t('bupy7/cropbox', $message, $params, $language);
     }
 }

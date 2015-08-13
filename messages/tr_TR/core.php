@@ -5,4 +5,5 @@ return [
     'Show original' => 'Orjinali Göster',
     'Height' => 'Yükseklik',
     'Width' => 'Genişlik',
+    'Reset' => 'Reset',
 ];

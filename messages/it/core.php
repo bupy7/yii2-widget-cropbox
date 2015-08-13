@@ -5,4 +5,5 @@ return [
     'Show original' => 'Mostra originale',
     'Height' => 'Altezza',
     'Width' => 'Larghezza',
+    'Reset' => 'Reset',
 ];
