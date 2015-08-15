@@ -141,11 +141,6 @@ class Cropbox extends InputWidget
      * Example: '@app/path/to/view'
      */
     public $pathToView = 'field';
-    /**
-     * @var array Callback of plugin events.
-     * - dontCrop: Event called when the image don't crop.
-     */
-    public $pluginEvents = [];
 
     /**
      * @inheritdoc
@@ -190,18 +185,8 @@ class Cropbox extends InputWidget
             'class' => 'file',
         ], $this->options);
         $optionsCropbox = Json::encode($this->pluginOptions);
-        $pluginEvents = [
-            'dontCrop' => new JsExpression('function(){}'),
-        ];
-        if (isset($this->pluginEvents['dontCrop'])) {
-            $pluginEvents['dontCrop'] = new JsExpression($this->pluginEvents['dontCrop']);
-        }
         
-        $js = <<<JS
-$('#{$this->id}')
-    .cropbox({$optionsCropbox})
-    .on('dontCrop', {$pluginEvents['dontCrop']});
-JS;
+        $js = "$('#{$this->id}').cropbox({$optionsCropbox});";
         $this->view->registerJs($js, View::POS_READY);
     }
     

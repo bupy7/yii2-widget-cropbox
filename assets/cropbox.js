@@ -19,12 +19,13 @@
         var obj = {
                 state:      {},
                 ratio:      1,
+                maxRatio:   1,
                 options:    options,
                 image:      new Image(),
                 
-                getDataURL: function (thumbWidth, thumbHeight) {
+                getDataURL: function () {
                     var canvas  = document.createElement('canvas'),
-                        info    = this.getInfo(thumbWidth, thumbHeight);
+                        info    = this.getInfo();
 
                     canvas.width = info.width;
                     canvas.height = info.height;
@@ -33,11 +34,12 @@
                     var imageData = canvas.toDataURL('image/png');
                     return imageData;
                 },
-                getInfo: function(thumbWidth, thumbHeight) {
+                getInfo: function(dim) {
+                    var $thumbBox = $th.find('.thumb-box');
                     var o = {
-                        width:  thumbWidth,
-                        height: thumbHeight,
-                        dim:    $th.css('background-position').split(' '),
+                        width:  $thumbBox.outerWidth(),
+                        height: $thumbBox.outerHeight(),
+                        dim:    dim || $th.css('background-position').split(' '),
                         size:   $th.css('background-size').split(' ')
                     };
                     o.dx    = parseInt(o.dim[0]) - $th.width()/2 + o.width/2,
@@ -56,6 +58,9 @@
                 },
                 zoomOut: function () {
                     this.ratio *= 0.9;
+                    if (this.ratio < this.maxRatio) {
+                        this.ratio = this.maxRatio;
+                    }
                     setBackground();
                 }
             },
@@ -83,16 +88,22 @@
                 e.stopImmediatePropagation();
 
                 if (obj.state.dragable) {
-                    var x   = e.clientX - obj.state.mouseX,
-                        y   = e.clientY - obj.state.mouseY,
-                        bg  = $th.css('background-position').split(' '),
-                        bgX = x + parseInt(bg[0]),
-                        bgY = y + parseInt(bg[1]);
+                    var bg      = $th.css('background-position').split(' '),
+                        bgX     = e.clientX - obj.state.mouseX + parseInt(bg[0]),
+                        bgY     = e.clientY - obj.state.mouseY + parseInt(bg[1]),
+                        info    = obj.getInfo([bgX, bgY]);
+                    
+                    console.log(info);
 
-                    $th.css('background-position', bgX +'px ' + bgY + 'px');
-
+                    if (info.dx > 0 || info.width + Math.abs(info.dx) > info.dw) {
+                        bgX = parseInt(bg[0]);
+                    }
+                    if (info.dy > 0 || info.height + Math.abs(info.dy) > info.dh) {
+                        bgY = parseInt(bg[1]);    
+                    }
+                    $th.css('background-position', bgX + 'px ' + bgY + 'px');                        
                     obj.state.mouseX = e.clientX;
-                    obj.state.mouseY = e.clientY;
+                    obj.state.mouseY = e.clientY; 
                 }
             },
             imgMouseUp = function(e) {
@@ -108,7 +119,15 @@
             $th.bind('mouseup', imgMouseUp);
         };
         obj.image.src = options.imgSrc;
-
+        var wRatio = $th.find('.thumb-box').outerWidth() / obj.image.width,
+            hRatio = $th.find('.thumb-box').outerHeight() / obj.image.height;
+        if (wRatio >= hRatio) {
+            obj.ratio = wRatio;
+            obj.maxRatio = obj.ratio;
+        } else {
+            obj.ratio = hRatio;
+            obj.maxRatio = obj.ratio;
+        }
         return obj;
     },
     methods = {
@@ -234,15 +253,8 @@
             if (!crop) {
                 return false;
             }
-            var thumbWidth  = $th.find('.thumb-box').outerWidth(),
-                thumbHeight = $th.find('.thumb-box').outerHeight(),
-                img         = crop.getDataURL(thumbWidth, thumbHeight),
-                info        = crop.getInfo(thumbWidth, thumbHeight);
-
-            if (thumbWidth > info.dw || thumbHeight > info.dh) {
-                $th.trigger('dontCrop');
-                return false;
-            }
+            var info    = crop.getInfo(),
+                img     = crop.getDataURL();             
 
             $th.find('.cropped').append($('<img>', {
                 class:  'img-thumbnail',
@@ -261,8 +273,8 @@
                 dw:     info.dw,
                 dh:     info.dh,
                 ratio:  info.ratio,
-                w:      thumbWidth,
-                h:      thumbHeight
+                w:      info.width,
+                h:      info.height
             };
             $('#' + o.idCropInfo).val(JSON.stringify(cropInfo));
             
