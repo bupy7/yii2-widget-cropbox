@@ -92,14 +92,15 @@
                         bgX     = e.clientX - obj.state.mouseX + parseInt(bg[0]),
                         bgY     = e.clientY - obj.state.mouseY + parseInt(bg[1]),
                         info    = obj.getInfo([bgX, bgY]);
-                    
-                    console.log(info);
-
-                    if (info.dx > 0 || info.width + Math.abs(info.dx) > info.dw) {
-                        bgX = parseInt(bg[0]);
+                    if (info.dx > 0) {
+                        bgX = ($th.width() - info.width) / 2;
+                    } else if (info.width + Math.abs(info.dx) > info.dw) {
+                        bgX = -(info.dw - info.width - (($th.width() - info.width) / 2));
                     }
-                    if (info.dy > 0 || info.height + Math.abs(info.dy) > info.dh) {
-                        bgY = parseInt(bg[1]);    
+                    if (info.dy > 0) {
+                        bgY = ($th.height() - info.height) / 2;
+                    } else if (info.height + Math.abs(info.dy) > info.dh) {
+                        bgY = -(info.dh - info.height - (($th.height() - info.height) / 2));
                     }
                     $th.css('background-position', bgX + 'px ' + bgY + 'px');                        
                     obj.state.mouseX = e.clientX;
