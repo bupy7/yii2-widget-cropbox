@@ -3,35 +3,30 @@
 use yii\helpers\Html;
 use bupy7\cropbox\Cropbox;
 use kartik\slider\Slider;
-use kartik\icons\Icon;
-
-Icon::map($this, Icon::BSG);
 ?>
 <div id="<?= $this->context->id; ?>" class="cropbox">
-    <div class="image-box">
-        <div class="thumb-box"></div>
+    <div class="workarea-cropbox">
+        <div class="bg-cropbox">
+            <img class="image-cropbox">
+            <div class="membrane-cropbox"></div>
+        </div>
+        <div class="frame-cropbox"></div>
     </div>
     <p class="message"></p>
     <div class="btn-group">
         <span class="btn btn-primary btn-file">
-        <?= Icon::show('folder-open') 
+        <?= '<i class="glyphicon glyphicon-folder-open"></i> '
             . Cropbox::t('Browse') 
             . Html::activeFileInput($this->context->model, $this->context->attribute, $this->context->options); ?>
         </span>
-        <?= Html::button(Icon::show('expand'), [
-            'class' => 'btn btn-default btn-zoom-in',
-        ]); ?>
-        <?= Html::button(Icon::show('compress'), [
-            'class' => 'btn btn-default btn-zoom-out',
-        ]); ?>
-        <?= Html::button(Icon::show('crop') . Cropbox::t('Crop'), [
+        <?= Html::button('<i class="glyphicon glyphicon-scissors"></i> ' . Cropbox::t('Crop'), [
             'class' => 'btn btn-success btn-crop',
         ]); ?>
-        <?= Html::button(Icon::show('crop') . Cropbox::t('Reset'), [
+        <?= Html::button('<i class="glyphicon glyphicon-repeat"></i> ' . Cropbox::t('Reset'), [
             'class' => 'btn btn-warning btn-reset',
         ]); ?>
     </div>
-    <div class="form-horizontal">
+<!--    <div class="form-horizontal">
         <div class="form-group resize-width">
             <label for="<?= $this->context->id; ?>_cbox_resize_width" class="col-md-3">
                 <?= Cropbox::t('Width'); ?>
@@ -82,7 +77,7 @@ Icon::map($this, Icon::BSG);
                 ?>
             </div>
         </div>
-    </div>
+    </div>-->
     <div class="cropped">
         <?php
         if (is_string($this->context->originalUrl) && !empty($this->context->originalUrl)) {

@@ -15,9 +15,8 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "yiisoft/yii2-bootstrap": "@dev",
-        "kartik-v/yii2-slider": "*",
-        "kartik-v/yii2-icons": "*"
+        "yiisoft/yii2-bootstrap": "*",
+        "kartik-v/yii2-slider": "*"
     },
     "autoload": {
         "psr-4": {

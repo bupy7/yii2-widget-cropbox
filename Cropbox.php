@@ -75,7 +75,7 @@ class Cropbox extends InputWidget
      * 
      * Example use:
      * [   
-     *      'cropSettings' => [
+     *      'variants' => [
      *          [
      *              'width' => 350,
      *              'height' => 400,
@@ -89,7 +89,7 @@ class Cropbox extends InputWidget
      * 
      * or more once option:
      * [
-     *      'cropSettings' => [
+     *      'variants' => [
      *          [
      *              'width' => 350,
      *              'height' => 400,
@@ -98,17 +98,17 @@ class Cropbox extends InputWidget
      *              'width' => 150,
      *              'height' => 150,
      *          ],
-     *          'messages' => [
-     *              'Preview image of article',
-     *              'Thumbnail image of article',
-     *          ],
+     *      ],
+     *      'messages' => [
+     *          'Preview image of article',
+     *          'Thumbnail image of article',
      *      ],
      * ]
      * 
-     * Also to "cropSettings" you can pointer "maxHeight", "minHeight" and "maxWidth" and "maxWidth" for each 
+     * Also to "variants" you can pointer "maxHeight", "minHeight" and "maxWidth" and "maxWidth" for each 
      * cropping options if $resizeHeight or $resizeWidth is "true". Example:
      * [
-     *      'cropSettings' => [
+     *      'variants' => [
      *          [
      *              'width' => 350,
      *              'height' => 400,
@@ -150,21 +150,18 @@ class Cropbox extends InputWidget
     {
         parent::init();
 
-        if (empty($this->pluginOptions['cropSettings'])) {
-            $this->pluginOptions['cropSettings'][] = [
-                'width' => 200,
-                'height' => 200,
-            ];
-        } else {
-            foreach ($this->pluginOptions['cropSettings'] as $option) {
+        if (!empty($this->pluginOptions['variants'])) {
+            foreach ($this->pluginOptions['variants'] as $option) {
                 if (isset($option['minHeight']) || isset($option['maxHeight'])) {
                     if (!(isset($option['minHeight']) && isset($option['maxHeight']))) {
-                        throw new InvalidConfigException('The property "minHeight" and "maxHeight" must be setting both for resizing cropping area.');
+                        throw new InvalidConfigException('The property "minHeight" and "maxHeight" must be setting '
+                            . 'both for resizing cropping area.');
                     }
                 }
                 if (isset($option['minWidth']) || isset($option['maxWidth'])) {
                     if (!(isset($option['minWidth']) && isset($option['maxWidth']))) {
-                        throw new InvalidConfigException('The property "minWidth" and "maxWidth" must be setting both for resizing cropping area.');
+                        throw new InvalidConfigException('The property "minWidth" and "maxWidth" must be setting both '
+                            . 'for resizing cropping area.');
                     }
                 }
                 if (empty($option['height']) || empty($option['width'])) {
@@ -176,14 +173,7 @@ class Cropbox extends InputWidget
         CropboxAsset::register($this->view);
         $this->registerTranslations();
         
-        $this->pluginOptions = array_merge([
-            'boxWidth' => 300,
-            'boxHeight' => 300,
-        ], $this->pluginOptions);
-        $this->pluginOptions['idCropInfo'] = Html::getInputId($this->model, $this->attributeCropInfo);
-        $this->options = array_merge([
-            'class' => 'file',
-        ], $this->options);
+        $this->pluginOptions['selectorCropInfo'] = '#' . Html::getInputId($this->model, $this->attributeCropInfo);
         $optionsCropbox = Json::encode($this->pluginOptions);
         
         $js = "$('#{$this->id}').cropbox({$optionsCropbox});";

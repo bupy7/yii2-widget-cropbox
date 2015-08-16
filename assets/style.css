@@ -1,21 +1,40 @@
 @charset "UTF-8";
 
-div.cropbox .image-box {
+.workarea-cropbox {
+    position: relative;
+    overflow: hidden;
+}
+.bg-cropbox {
     position: relative;
     border: 1px solid #aaa;
-    background: #fff;
     overflow: hidden;
-    background-repeat: no-repeat;
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC");
+    text-align: center;
+}
+.membrane-cropbox {
+    background-color: rgba(0, 0, 0, 0.5);
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
     cursor: move;
 }
-div.cropbox .image-box .thumb-box {
+.frame-cropbox {
     position: absolute;
-    left: 50%;
-    top: 50%;
     box-sizing: border-box;
-    border: 1px solid rgb(102, 102, 102);
-    box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
-    background: none repeat scroll 0% 0% transparent;
+    outline: 1px solid #999;
+    cursor: move;
+    overflow: hidden;
+    background-repeat: no-repeat;
+}
+.frame-cropbox:hover {
+    outline-color: #337ab7;
+    box-shadow: 0 0 5px #2e6da4;
+}
+.image-cropbox {
+    max-width: 100%;
+    position: relative;
 }
 div.cropbox .message {
     margin-top: 10px;
