@@ -16,7 +16,7 @@
     "minimum-stability": "stable",
     "require": {
         "yiisoft/yii2-bootstrap": "*",
-        "kartik-v/yii2-slider": "*"
+        "bower-asset/jquery-mousewheel": "*"
     },
     "autoload": {
         "psr-4": {

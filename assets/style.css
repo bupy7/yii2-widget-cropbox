@@ -33,7 +33,6 @@
     box-shadow: 0 0 5px #2e6da4;
 }
 .image-cropbox {
-    max-width: 100%;
     position: relative;
 }
 div.cropbox .message {

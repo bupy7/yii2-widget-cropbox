@@ -4,6 +4,11 @@ namespace bupy7\cropbox;
 
 use yii\web\AssetBundle;
 
+/**
+ * Assets of jQuery plugin 'cropbox'.
+ * @author Vasilij Belosludcev <bupy765@gmail.com>
+ * @since 1.0.0
+ */
 class CropboxAsset extends AssetBundle
 {
     public $sourcePath = '@bupy7/cropbox/assets';
@@ -14,9 +19,6 @@ class CropboxAsset extends AssetBundle
         'cropbox.js',
     ];
     public $depends = [
-        'yii\web\YiiAsset',
-        'yii\bootstrap\BootstrapPluginAsset',
-        'kartik\slider\SliderAsset',
-        'kartik\icons\FontAwesomeAsset',
+        'bupy7\cropbox\MouseWheelAsset',
     ];
 }

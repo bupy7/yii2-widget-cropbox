@@ -26,58 +26,6 @@ use kartik\slider\Slider;
             'class' => 'btn btn-warning btn-reset',
         ]); ?>
     </div>
-<!--    <div class="form-horizontal">
-        <div class="form-group resize-width">
-            <label for="<?= $this->context->id; ?>_cbox_resize_width" class="col-md-3">
-                <?= Cropbox::t('Width'); ?>
-            </label>
-            <div class="col-md-6">
-                <?=
-                Slider::widget([
-                    'name' => $this->context->id . '_cbox_resize_width',
-                    'sliderColor' => Slider::TYPE_GREY,
-                    'handleColor' => Slider::TYPE_PRIMARY,
-                    'pluginOptions' => [
-                        'orientation' => 'horizontal',
-                        'handle' => 'round',
-                        'step' => 1,
-                        'tooltip' => 'hide',
-                    ],
-                    'pluginEvents' => [
-                        'slide' => "function(e) {
-                            $('#{$this->context->id}').cropbox('resizeThumbBox', {width: e.value});
-                        }",
-                    ],
-                ]);
-                ?>
-            </div>
-        </div>
-        <div class="form-group resize-height">
-            <label for="<?= $this->context->id; ?>_cbox_resize_height" class="col-md-3">
-                <?= Cropbox::t('Height'); ?>
-            </label>
-            <div class="col-md-6">
-                <?=
-                Slider::widget([
-                    'name' => $this->context->id . '_cbox_resize_height',
-                    'sliderColor' => Slider::TYPE_GREY,
-                    'handleColor' => Slider::TYPE_PRIMARY,
-                    'pluginOptions' => [
-                        'orientation' => 'horizontal',
-                        'handle' => 'round',
-                        'step' => 1,
-                        'tooltip' => 'hide',
-                    ],
-                    'pluginEvents' => [
-                        'slide' => "function(e) {
-                            $('#{$this->context->id}').cropbox('resizeThumbBox', {height: e.value});
-                        }",
-                    ],
-                ]);
-                ?>
-            </div>
-        </div>
-    </div>-->
     <div class="cropped">
         <?php
         if (is_string($this->context->originalUrl) && !empty($this->context->originalUrl)) {

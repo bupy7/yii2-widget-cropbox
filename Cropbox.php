@@ -8,7 +8,6 @@ use yii\helpers\Html;
 use yii\helpers\Json;
 use yii\base\InvalidConfigException;
 use yii\web\View;
-use yii\web\JsExpression;
 
 /**
  * Class file CropboxWidget.
@@ -173,7 +172,11 @@ class Cropbox extends InputWidget
         CropboxAsset::register($this->view);
         $this->registerTranslations();
         
-        $this->pluginOptions['selectorCropInfo'] = '#' . Html::getInputId($this->model, $this->attributeCropInfo);
+        $this->pluginOptions['cropInfoSelector'] = '#' . Html::getInputId($this->model, $this->attributeCropInfo);
+        $this->pluginOptions = array_merge([
+            'btnResetSelector' => '.btn-reset',
+            'btnCropSelector' => '.btn-crop',
+        ], $this->pluginOptions);
         $optionsCropbox = Json::encode($this->pluginOptions);
         
         $js = "$('#{$this->id}').cropbox({$optionsCropbox});";

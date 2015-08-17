@@ -12,6 +12,8 @@
         $image = null,
         $workarea = null,
         $membrane = null,
+        $btnReset = null,
+        $btnCrop = null,
         variants = [
             {
                 width: 200,
@@ -22,153 +24,179 @@
         frameState = {},
         imageState = {},
         sourceImage = new Image,
+        ratio = 1,
         methods = {
             init: function(options) {
+                $th = $(this); 
                 variants = options.variants || variants;
-                $cropInfoInput = $(options.selectorCropInfo);
-                $th = $(this);
-                
-                $image = $th.find('.image-cropbox');
-                $frame = $th.find('.frame-cropbox');
-                $workarea = $th.find('.workarea-cropbox');
-                $membrane = $th.find('.membrane-cropbox');
-                
-                methods.initBrowseImage();
-                $(window).on('resize', function() {
-                    methods.resizeWorkarea();
-                });
-            },
-            initFrameEvents: function() {
-                $frame.on('mousedown', methods.frameMouseDown);
-                $frame.on('mousemove', methods.frameMouseMove);
-                $frame.on('mouseup', methods.frameMouseUp);
-            },
-            initImageEvents: function() {
-                $membrane.on('mousedown', methods.imageMouseDown);
-                $membrane.on('mousemove', methods.imageMouseMove);
-                $membrane.on('mouseup', methods.imageMouseUp);
-            },
-            initFrame: function() {
-                var left = $workarea.width() / 2 - variants[indexVariant].width / 2,
-                    top = $workarea.height() / 2 - variants[indexVariant].height / 2;
-                $frame.css({
-                    width: variants[indexVariant].width,
-                    height: variants[indexVariant].height,
-                    left: left,
-                    top: top,
-                    backgroundImage: 'url("' + sourceImage.src + '")',
-                    backgroundSize: $image.width() + 'px ' + $image.height() + 'px'
-                });
-                methods.refrashFrame(left, top);
-            },
-            refrashFrame: function(left, top) {
-                var imgLeft = $image.position().left,
-                    imgTop = $image.position().top,
-                    x = imgLeft - left,
-                    y = imgTop - top;
-                if (x > 0) {
-                    x = 0;
-                    left = imgLeft;
-                } else if ($image.width() + imgLeft < left + $frame.width()) {
-                    x = $frame.width() - $image.width();
-                    left = imgLeft + $image.width() - $frame.width();
-                } 
-                if (y > 0) {
-                    y = 0;
-                    top = imgTop;
-                } else if ($image.height() + imgTop < top + $frame.height()) {
-                    y = $frame.height() - $image.height();
-                    top = imgTop + $image.height() - $frame.height();
-                }
-                $frame.css({
-                    left: left,
-                    top: top,
-                    backgroundPosition: x + 'px ' + y + 'px'
-                });
-            },
-            frameMouseDown: function(event) {
-                event.stopImmediatePropagation();    
-  
-                frameState.dragable = true;
+                $cropInfoInput = $th.find(options.cropInfoSelector);   
+                $btnReset = $th.find(options.btnResetSelector);
+                $btnCrop = $th.find(options.btnCropSelector);
+                initSelectImage();
+            }
+        },
+        initComponents = function() {
+            $image = $th.find('.image-cropbox');
+            $frame = $th.find('.frame-cropbox');
+            $workarea = $th.find('.workarea-cropbox');
+            $membrane = $th.find('.membrane-cropbox');
+        },
+        initFrameEvents = function() {
+            $frame.on('mousedown', frameMouseDown);
+            $frame.on('mousemove', frameMouseMove);
+            $frame.on('mouseup', frameMouseUp);
+        },
+        initImageEvents = function() {
+            $membrane.on('mousedown', imageMouseDown);
+            $membrane.on('mousemove', imageMouseMove);
+            $membrane.on('mouseup', imageMouseUp);
+            $membrane.on('mousewheel', imageMouseWheel);
+        },
+        initWorkareaEvents = function() {
+            $(window).on('resize', resizeWorkarea);
+        },
+        initFrame = function() {
+            var left = $workarea.width() / 2 - variants[indexVariant].width / 2,
+                top = $workarea.height() / 2 - variants[indexVariant].height / 2;
+            $frame.css({
+                width: variants[indexVariant].width,
+                height: variants[indexVariant].height,
+                left: left,
+                top: top,
+                backgroundImage: 'url("' + sourceImage.src + '")',
+                backgroundSize: $image.width() + 'px ' + $image.height() + 'px'
+            });
+            refrashFrame(left, top);
+        },
+        refrashFrame = function(left, top) {
+            var imgLeft = $image.position().left,
+                imgTop = $image.position().top,
+                x = imgLeft - left,
+                y = imgTop - top;
+            if (x > 0) {
+                x = 0;
+                left = imgLeft;
+            } else if ($image.width() + imgLeft < left + $frame.width()) {
+                x = $frame.width() - $image.width();
+                left = imgLeft + $image.width() - $frame.width();
+            } 
+            if (y > 0) {
+                y = 0;
+                top = imgTop;
+            } else if ($image.height() + imgTop < top + $frame.height()) {
+                y = $frame.height() - $image.height();
+                top = imgTop + $image.height() - $frame.height();
+            }
+            $frame.css({
+                left: left,
+                top: top,
+                backgroundPosition: x + 'px ' + y + 'px'
+            });
+        },
+        frameMouseDown = function(event) {
+            event.stopImmediatePropagation();    
+
+            frameState.dragable = true;
+            frameState.mouseX = event.clientX;
+            frameState.mouseY = event.clientY;
+        },
+        frameMouseMove = function(event) {
+            event.stopImmediatePropagation();
+
+            if (frameState.dragable) {
+                var xOld = $frame.css('left'),
+                    yOld = $frame.css('top'),
+                    left = event.clientX - frameState.mouseX + parseInt(xOld),
+                    top = event.clientY - frameState.mouseY + parseInt(yOld);
+
                 frameState.mouseX = event.clientX;
                 frameState.mouseY = event.clientY;
-            },
-            frameMouseMove: function(event) {
-                event.stopImmediatePropagation();
-                
-                if (frameState.dragable) {
-                    var xOld = $frame.css('left'),
-                        yOld = $frame.css('top'),
-                        left = event.clientX - frameState.mouseX + parseInt(xOld),
-                        top = event.clientY - frameState.mouseY + parseInt(yOld);
-                    
-                    frameState.mouseX = event.clientX;
-                    frameState.mouseY = event.clientY;
-                    methods.refrashFrame(left, top);
-                }
-            },
-            frameMouseUp: function(event) {
-                event.stopImmediatePropagation();    
-                
-                frameState.dragable = false;
-            },
-            imageMouseDown: function(event) {
-                event.stopImmediatePropagation();    
+                refrashFrame(left, top);
+            }
+        },
+        frameMouseUp = function(event) {
+            event.stopImmediatePropagation();    
 
-                imageState.dragable = true;
+            frameState.dragable = false;
+        },
+        imageMouseDown = function(event) {
+            event.stopImmediatePropagation();    
+
+            imageState.dragable = true;
+            imageState.mouseX = event.clientX;
+            imageState.mouseY = event.clientY;
+        },
+        imageMouseMove = function(event) {
+            event.stopImmediatePropagation();
+
+            if (imageState.dragable) {
+                var xOld = $image.css('left'),
+                    yOld = $image.css('top'),
+                    left = event.clientX - imageState.mouseX + parseInt(xOld),
+                    top = event.clientY - imageState.mouseY + parseInt(yOld);
+
                 imageState.mouseX = event.clientX;
                 imageState.mouseY = event.clientY;
-            },
-            imageMouseMove: function(event) {
-                event.stopImmediatePropagation();
-                
-                if (imageState.dragable) {
-                    var xOld = $image.css('left'),
-                        yOld = $image.css('top'),
-                        left = event.clientX - imageState.mouseX + parseInt(xOld),
-                        top = event.clientY - imageState.mouseY + parseInt(yOld);
-                    
-                    imageState.mouseX = event.clientX;
-                    imageState.mouseY = event.clientY;
-                    methods.refrashImage(left, top);
-                    
-                    frameState.mouseX = event.clientX;
-                    frameState.mouseY = event.clientY;
-                    methods.refrashFrame(parseInt($frame.css('left')), parseInt($frame.css('top')));
-                }
-            },
-            imageMouseUp: function(event) {
-                event.stopImmediatePropagation();    
-                
-                imageState.dragable = false;
-            },
-            refrashImage: function(left, top) {
-                $image.css({left: left, top: top});
-            },
-            initBrowseImage: function() {
-                $th.find('input[type="file"]').on('change', function() {
-                    var fileReader = new FileReader();
-                    fileReader.readAsDataURL(this.files[0]);
-                    fileReader.onload = function(event) {
-                        methods.setImage(event.target.result);
-                    };
-                });
-            },
-            setImage: function(data) {
-                $image.one('load', function() {
-                    methods.initFrameEvents();
-                    methods.initImageEvents();
-                    sourceImage.src = data;
-                    sourceImage.onload = function() {
-                        methods.initFrame();
-                    };
-                });
-                $image.attr('src', data); 
-            },
-            resizeWorkarea: function() {
+                refrashImage(left, top);
+
+                frameState.mouseX = event.clientX;
+                frameState.mouseY = event.clientY;
+                refrashFrame(parseInt($frame.css('left')), parseInt($frame.css('top')));
             }
+        },
+        imageMouseUp = function(event) {
+            event.stopImmediatePropagation();    
+
+            imageState.dragable = false;
+        },
+        refrashImage = function(left, top) {
+            $image.css({left: left, top: top});
+        },
+        initSelectImage = function() {
+            $th.find('input[type="file"]').on('change', function() {
+                initComponents();
+                var fileReader = new FileReader();
+                fileReader.readAsDataURL(this.files[0]);
+                $(fileReader).one('load', loadImage);
+            });
+        },
+        loadImage = function(event) {
+            $image.one('load', function() {
+                initFrameEvents();
+                initImageEvents();
+                initWorkareaEvents();
+                sourceImage.src = this.src;
+                $(sourceImage).one('load', initFrame);
+            });
+            $image.attr('src', event.target.result);
+        },
+        resizeWorkarea = function() { 
+        },
+        imageMouseWheel = function(event) {
+            if (event.deltaY > 0) {
+                zoomOut();
+            } else {
+                zoomIn();
+            }
+            event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+        },
+        zoomIn = function () {
+            ratio *= 1.01;
+            var width = sourceImage.width * ratio,
+                height = sourceImage.height * ratio;
+            $image.css({width: width, height: height});
+            $frame.css({backgroundSize: width + 'px ' + height + 'px'});
+            refrashFrame(parseInt($frame.css('left')), parseInt($frame.css('top')));
+        },
+        zoomOut = function () {
+            ratio *= 0.99;
+            var width = sourceImage.width * ratio,
+                height = sourceImage.height * ratio;
+            $image.css({width: width, height: height});
+            $frame.css({backgroundSize: width + 'px ' + height + 'px'});
+            refrashFrame(parseInt($frame.css('left')), parseInt($frame.css('top')));
         };
-            
+        
     $.fn.cropbox = function(options) {
         if (methods[options]) {
 			return methods[options].apply(this, Array.prototype.slice.call(arguments, 1));
