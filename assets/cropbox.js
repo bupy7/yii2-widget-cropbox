@@ -14,6 +14,7 @@
         $membrane = null,
         $btnReset = null,
         $btnCrop = null,
+        $file = null,
         variants = [
             {
                 width: 200,
@@ -32,7 +33,8 @@
                 $cropInfoInput = $th.find(options.cropInfoSelector);   
                 $btnReset = $th.find(options.btnResetSelector);
                 $btnCrop = $th.find(options.btnCropSelector);
-                initSelectImage();
+                initComponents();
+                initEvents();
             }
         },
         initComponents = function() {
@@ -40,22 +42,28 @@
             $frame = $th.find('.frame-cropbox');
             $workarea = $th.find('.workarea-cropbox');
             $membrane = $th.find('.membrane-cropbox');
+            $file = $th.find('input[type="file"]');
         },
-        initFrameEvents = function() {
+        initEvents = function() {
             $frame.on('mousedown', frameMouseDown);
             $frame.on('mousemove', frameMouseMove);
             $frame.on('mouseup', frameMouseUp);
-        },
-        initImageEvents = function() {
+
             $membrane.on('mousedown', imageMouseDown);
             $membrane.on('mousemove', imageMouseMove);
             $membrane.on('mouseup', imageMouseUp);
             $membrane.on('mousewheel', imageMouseWheel);
-        },
-        initWorkareaEvents = function() {
+
             $(window).on('resize', resizeWorkarea);
+            
+            $file.on('change', function() {
+                var fileReader = new FileReader();
+                fileReader.readAsDataURL(this.files[0]);
+                $(fileReader).one('load', loadImage);
+            });
         },
         initFrame = function() {
+            resetRatio();
             var left = $workarea.width() / 2 - variants[indexVariant].width / 2,
                 top = $workarea.height() / 2 - variants[indexVariant].height / 2;
             $frame.css({
@@ -66,7 +74,7 @@
                 backgroundImage: 'url("' + sourceImage.src + '")',
                 backgroundSize: $image.width() + 'px ' + $image.height() + 'px'
             });
-            refrashFrame(left, top);
+            refrashFrame(left, top);    
         },
         refrashFrame = function(left, top) {
             var imgLeft = $image.position().left,
@@ -152,49 +160,62 @@
         refrashImage = function(left, top) {
             $image.css({left: left, top: top});
         },
-        initSelectImage = function() {
-            $th.find('input[type="file"]').on('change', function() {
-                initComponents();
-                var fileReader = new FileReader();
-                fileReader.readAsDataURL(this.files[0]);
-                $(fileReader).one('load', loadImage);
-            });
-        },
         loadImage = function(event) {
-            $image.one('load', function() {
-                initFrameEvents();
-                initImageEvents();
-                initWorkareaEvents();
-                sourceImage.src = this.src;
-                $(sourceImage).one('load', initFrame);
+            $(sourceImage).one('load', function() {
+                $image.one('load', function() {
+                    refrashImage('auto', 'auto');
+                    initFrame();  
+                });
+                $image.attr('src', this.src);
             });
-            $image.attr('src', event.target.result);
+            sourceImage.src = event.target.result;
         },
         resizeWorkarea = function() { 
         },
         imageMouseWheel = function(event) {
-            if (event.deltaY > 0) {
-                zoomOut();
-            } else {
+            if (event.deltaY > 0) {              
                 zoomIn();
+            } else {
+                zoomOut();
             }
             event.preventDefault ? event.preventDefault() : (event.returnValue = false);
         },
-        zoomIn = function () {
+        zoomIn = function() {
             ratio *= 1.01;
             var width = sourceImage.width * ratio,
                 height = sourceImage.height * ratio;
-            $image.css({width: width, height: height});
-            $frame.css({backgroundSize: width + 'px ' + height + 'px'});
+            zoom(width, height);
             refrashFrame(parseInt($frame.css('left')), parseInt($frame.css('top')));
         },
-        zoomOut = function () {
+        zoomOut = function() {
+            var oldRatio = ratio;
             ratio *= 0.99;
             var width = sourceImage.width * ratio,
                 height = sourceImage.height * ratio;
+            if (width >= $frame.width() && height >= $frame.height()) {
+                zoom(width, height);
+                refrashFrame(parseInt($frame.css('left')), parseInt($frame.css('top')));
+            } else {
+                ratio = oldRatio;
+            }
+        },
+        zoom = function(width, height) {
             $image.css({width: width, height: height});
             $frame.css({backgroundSize: width + 'px ' + height + 'px'});
-            refrashFrame(parseInt($frame.css('left')), parseInt($frame.css('top')));
+        },
+        resetRatio = function() {
+            if ($frame.width() > sourceImage.width || $frame.height() > sourceImage.height) {
+                var wRatio = $frame.width() / sourceImage.width,
+                    hRatio = $frame.height() / sourceImage.height;
+                if (wRatio > hRatio) {
+                    ratio = wRatio;
+                } else {
+                    ratio = hRatio;
+                }
+            } else {
+                ratio = 1;
+            }
+            zoom(sourceImage.width * ratio, sourceImage.height * ratio);
         };
         
     $.fn.cropbox = function(options) {

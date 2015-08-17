@@ -172,11 +172,11 @@ class Cropbox extends InputWidget
         CropboxAsset::register($this->view);
         $this->registerTranslations();
         
-        $this->pluginOptions['cropInfoSelector'] = '#' . Html::getInputId($this->model, $this->attributeCropInfo);
         $this->pluginOptions = array_merge([
             'btnResetSelector' => '.btn-reset',
             'btnCropSelector' => '.btn-crop',
         ], $this->pluginOptions);
+        $this->pluginOptions['cropInfoSelector'] = '#' . Html::getInputId($this->model, $this->attributeCropInfo);
         $optionsCropbox = Json::encode($this->pluginOptions);
         
         $js = "$('#{$this->id}').cropbox({$optionsCropbox});";
