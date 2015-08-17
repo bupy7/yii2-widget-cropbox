@@ -10,7 +10,8 @@
         $cropInfoInput = null,
         $frame = null,
         $image = null,
-        $workarea = null,      
+        $workarea = null,
+        $membrane = null,
         variants = [
             {
                 width: 200,
@@ -30,23 +31,24 @@
                 $image = $th.find('.image-cropbox');
                 $frame = $th.find('.frame-cropbox');
                 $workarea = $th.find('.workarea-cropbox');
+                $membrane = $th.find('.membrane-cropbox');
                 
                 methods.initBrowseImage();
                 $(window).on('resize', function() {
-                    methods.resetFrame();
+                    methods.resizeWorkarea();
                 });
             },
-            initFrame: function() {
+            initFrameEvents: function() {
                 $frame.on('mousedown', methods.frameMouseDown);
                 $frame.on('mousemove', methods.frameMouseMove);
                 $frame.on('mouseup', methods.frameMouseUp);
             },
-            initImage: function() {
-                $th.find('.membrane-cropbox').on('mousedown', methods.imageMouseDown);
-                $th.find('.membrane-cropbox').on('mousemove', methods.imageMouseMove);
-                $th.find('.membrane-cropbox').on('mouseup', methods.imageMouseUp);
+            initImageEvents: function() {
+                $membrane.on('mousedown', methods.imageMouseDown);
+                $membrane.on('mousemove', methods.imageMouseMove);
+                $membrane.on('mouseup', methods.imageMouseUp);
             },
-            resetFrame: function() {
+            initFrame: function() {
                 var left = $workarea.width() / 2 - variants[indexVariant].width / 2,
                     top = $workarea.height() / 2 - variants[indexVariant].height / 2;
                 $frame.css({
@@ -99,6 +101,7 @@
                         yOld = $frame.css('top'),
                         left = event.clientX - frameState.mouseX + parseInt(xOld),
                         top = event.clientY - frameState.mouseY + parseInt(yOld);
+                    
                     frameState.mouseX = event.clientX;
                     frameState.mouseY = event.clientY;
                     methods.refrashFrame(left, top);
@@ -124,15 +127,23 @@
                         yOld = $image.css('top'),
                         left = event.clientX - imageState.mouseX + parseInt(xOld),
                         top = event.clientY - imageState.mouseY + parseInt(yOld);
+                    
                     imageState.mouseX = event.clientX;
                     imageState.mouseY = event.clientY;
-                    $image.css({left: left, top: top});
+                    methods.refrashImage(left, top);
+                    
+                    frameState.mouseX = event.clientX;
+                    frameState.mouseY = event.clientY;
+                    methods.refrashFrame(parseInt($frame.css('left')), parseInt($frame.css('top')));
                 }
             },
             imageMouseUp: function(event) {
                 event.stopImmediatePropagation();    
                 
                 imageState.dragable = false;
+            },
+            refrashImage: function(left, top) {
+                $image.css({left: left, top: top});
             },
             initBrowseImage: function() {
                 $th.find('input[type="file"]').on('change', function() {
@@ -145,14 +156,16 @@
             },
             setImage: function(data) {
                 $image.one('load', function() {
-                    methods.initFrame();
-                    methods.initImage();
+                    methods.initFrameEvents();
+                    methods.initImageEvents();
                     sourceImage.src = data;
                     sourceImage.onload = function() {
-                        methods.resetFrame();
+                        methods.initFrame();
                     };
                 });
                 $image.attr('src', data); 
+            },
+            resizeWorkarea: function() {
             }
         };
             
