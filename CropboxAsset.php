@@ -13,10 +13,10 @@ class CropboxAsset extends AssetBundle
 {
     public $sourcePath = '@bupy7/cropbox/assets';
     public $css = [
-        'style.css',
+        'jquery.cropbox.css',
     ];
     public $js = [
-        'cropbox.js',
+        'jquery.cropbox.js',
     ];
     public $depends = [
         'bupy7\cropbox\MouseWheelAsset',
