@@ -1,9 +1,9 @@
 yii2-widget-cropbox
 ============
 
-This is widget wrapper and fork of Cropbox https://github.com/hongkhanh/cropbox . This widget allows crop image before upload to server and send informations about crop in JSON format.
+This is widget wrapper of [jquery-cropbox](https://github.com/bupy7/jquery-cropbox). 
 
-![Screenshot](screenshot.png)
+This widget allows crop image before upload to server and send informations about crop in JSON format.
 
 ##Functional
 
@@ -14,6 +14,11 @@ This is widget wrapper and fork of Cropbox https://github.com/hongkhanh/cropbox 
 - You can use custom view.
 - Resizing cropping image on-the-fly.
 
+## Demo and documentation of plugin
+
+[jQuery-Cropbox Demo](http://bupy7.github.io/jquery-cropbox/)
+
+[jquery-cropbox README](https://github.com/bupy7/jquery-cropbox/blob/master/README.md)
 
 ##Installation
 The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
@@ -29,6 +34,8 @@ or add
 ```
 
 to the **require** section of your **composer.json** file.
+
+If you use v3.0.1 then go to [v3.0.1](https://github.com/bupy7/yii2-widget-cropbox/tree/v3.0.1).
 
 If you use v2.2 then go to [v2.2](https://github.com/bupy7/yii2-widget-cropbox/tree/v2.2).
 
