@@ -27,18 +27,27 @@ use bupy7\cropbox\Cropbox;
             'class' => 'btn btn-warning btn-reset',
         ]); ?>
     </div>
-    <h3></h3>
     <div class="cropped">
+        <p>
+            <?php 
+            if (!empty($this->context->originalImageUrl)) {
+                echo Html::a(
+                    '<i class="glyphicon glyphicon-eye-open"></i> ' . Cropbox::t('Show original'), 
+                    $this->context->originalImageUrl, 
+                    [
+                        'target' => '_blank',
+                        'class' => 'btn btn-info',
+                    ]
+                );
+            } 
+            ?>
+        </p>
         <?php
-        if (!empty($this->context->originalUrl)) {
-            echo Html::a(Icon::show('eye') . Cropbox::t('SHOW_ORIGINAL'), $this->context->originalUrl, [
-                'target' => '_blank',
-                'class' => 'btn btn-info',
-            ]);
-        }
-        if (!empty($this->context->previewUrl)) {
-            foreach ($this->context->previewUrl as $url) {
-                echo Html::img($url, ['class' => 'img-thumbnail']);
+        if (!empty($this->context->previewImagesUrl)) {
+            foreach ($this->context->previewImagesUrl as $url) {
+                if (!empty($url)) {
+                    echo Html::img($url, ['class' => 'img-thumbnail']);
+                }
             }
         }
         ?>

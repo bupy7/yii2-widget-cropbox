@@ -102,7 +102,7 @@ public function rules()
     
     [
         'image', 
-        'file', 
+        'image', 
         'extensions' => ['jpg', 'jpeg', 'png', 'gif'],
         'mimeTypes' => ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif'],
     ],
@@ -113,47 +113,59 @@ public function rules()
 
 ...
 
-public function afterSave()
+public function afterSave($insert, $changedAttributes)
 {
     ...
-    
+
     // open image
     $image = Image::getImagine()->open($this->image->tempName);
-    
+
     // rendering information about crop of ONE option 
     $cropInfo = Json::decode($this->crop_info)[0];
-    $cropInfo['dw'] = (int)$cropInfo['dw']; //new width image
-    $cropInfo['dh'] = (int)$cropInfo['dh']; //new height image
-    $cropInfo['x'] = abs($cropInfo['x']); //begin position of frame crop by X
-    $cropInfo['y'] = abs($cropInfo['y']); //begin position of frame crop by Y
+    $cropInfo['dWidth'] = (int)$cropInfo['dWidth']; //new width image
+    $cropInfo['dHeight'] = (int)$cropInfo['dHeight']; //new height image
+    $cropInfo['x'] = $cropInfo['x']; //begin position of frame crop by X
+    $cropInfo['y'] = $cropInfo['y']; //begin position of frame crop by Y
     // Properties bolow we don't use in this example
     //$cropInfo['ratio'] = $cropInfo['ratio'] == 0 ? 1.0 : (float)$cropInfo['ratio']; //ratio image. 
-    //$cropInfo['w'] = (int)$cropInfo['w']; //width of cropped image
-    //$cropInfo['h'] = (int)$cropInfo['h']; //height of cropped image
-    
+    //$cropInfo['width'] = (int)$cropInfo['width']; //width of cropped image
+    //$cropInfo['height'] = (int)$cropInfo['height']; //height of cropped image
+    //$cropInfo['sWidth'] = (int)$cropInfo['sWidth']; //width of source image
+    //$cropInfo['sHeight'] = (int)$cropInfo['sHeight']; //height of source image
+
     //delete old images
     $oldImages = FileHelper::findFiles(Yii::getAlias('@path/to/save/image'), [
         'only' => [
             $this->id . '.*',
-            'thumb_' . $id . '.*',
+            'thumb_' . $this->id . '.*',
         ], 
     ]);
     for ($i = 0; $i != count($oldImages); $i++) {
         @unlink($oldImages[$i]);
     }
-    
+
     //saving thumbnail
-    $newSizeThumb = new Box($cropInfo['dw'], $cropInfo['dh']);
+    $newSizeThumb = new Box($cropInfo['dWidth'], $cropInfo['dHeight']);
     $cropSizeThumb = new Box(200, 200); //frame size of crop
     $cropPointThumb = new Point($cropInfo['x'], $cropInfo['y']);
-    $pathThumbImage = Yii::getAlias('@path/to/save/image') . '/thumb_' . $this->id . '.' . $this->image->getExtension();  
-    
+    $pathThumbImage = Yii::getAlias('@path/to/save/image') 
+        . '/thumb_' 
+        . $this->id 
+        . '.' 
+        . $this->image->getExtension();  
+
     $image->resize($newSizeThumb)
         ->crop($cropPointThumb, $cropSizeThumb)
         ->save($pathThumbImage, ['quality' => 100]);
-        
+
     //saving original
-    $this->image->saveAs(Yii::getAlias('@path/to/save/image') . $this->id . '.' . $this->image->getExtension());
+    $this->image->saveAs(
+        Yii::getAlias('@path/to/save/image') 
+        . '/' 
+        . $this->id 
+        . '.' 
+        . $this->image->getExtension()
+    );
 }
 
 ...
@@ -161,43 +173,15 @@ public function afterSave()
 
 ##Configuration
 
-####Thumbnail box
-
-By default thumbnail box has dimensions 200x200px. You can change their:
-
-```php
-echo $form->field($model, 'image')->widget(Cropbox::className(), [
-    'attributeCropInfo' => 'crop_info',
-    'optionsCropbox' => [
-        'boxWidth' => 400,
-        'boxHeight' => 300,
-        'cropSettings' => [
-            [
-                'width' => 350,
-                'height' => 200,
-            ],
-        ],
-    ],
-]);
-```
-
 ####Preview exist image of item
 
 If you want showing uploaded and cropped image, you must add following code:
 
 ```php
 echo $form->field($model, 'image')->widget(Cropbox::className(), [
-    'attributeCropInfo' => 'crop_info',
-    'optionsCropbox' => [
-        'boxWidth' => 400,
-        'boxHeight' => 300,
-        'cropSettings' => [
-            [
-                'width' => 350,
-                'height' => 200,
-            ],
-        ],
-    ],
+
+    ...
+
     'previewUrl' => [
         'url/to/small/image'
     ],
@@ -215,8 +199,8 @@ For this we will use of property `ratio` from `$cropInfo`.
 
 ```php
 $cropInfo = Json::decode($this->crop_info)[0];
-$cropInfo['dw'] = (int)$cropInfo['dw'];
-$cropInfo['dh'] = (int)$cropInfo['dh'];
+$cropInfo['dWidth'] = (int)$cropInfo['dWidth'];
+$cropInfo['dHeight'] = (int)$cropInfo['dHeight'];
 $cropInfo['x'] = abs($cropInfo['x']);
 $cropInfo['y'] = abs($cropInfo['y']);
 $cropInfo['ratio'] = $cropInfo['ratio'] == 0 ? 1.0 : (float)$cropInfo['ratio'];
@@ -233,45 +217,21 @@ $image->crop($cropPointLarge, $cropSizeLarge)
 
 ####Cropping more once option
 
-View: 
-
-```php
-echo $form->field($model, 'image')->widget(Cropbox::className(), [
-    'attributeCropInfo' => 'crop_info',
-    'optionsCropbox' => [
-        'boxWidth' => 400,
-        'boxHeight' => 300,
-        'cropSettings' => [
-            [
-                'width' => 150,
-                'height' => 150,
-            ],
-            [
-                'width' => 350,
-                'height' => 200,
-            ]
-        ],
-        'messages' => [
-            'Thumbnail image',
-            'Small image',
-        ],
-    ],
-]);
-```
+If you set few veriants crop to plugin, then you need make following:
 
 Model:
 
 ```php
 ...
 
-public function afterSave()
+public function afterSave($insert, $changedAttributes)
 {
     ...
     
     // open image
     $image = Image::getImagine()->open($this->image->tempName);
     
-    $cropSettings = [
+    $variants = [
         [
             'width' => 150,
             'height' => 150,
@@ -283,8 +243,8 @@ public function afterSave()
     ];
     for($i = 0; $i != count(Json::decode($this->crop_info)); $i++) {
         $cropInfo = Json::decode($this->crop_info)[$i];
-        $cropInfo['dw'] = (int)$cropInfo['dw']; //new width image
-        $cropInfo['dh'] = (int)$cropInfo['dh']; //new height image
+        $cropInfo['dWidth'] = (int)$cropInfo['dWidth']; //new width image
+        $cropInfo['dHeight'] = (int)$cropInfo['dHeight']; //new height image
         $cropInfo['x'] = abs($cropInfo['x']); //begin position of frame crop by X
         $cropInfo['y'] = abs($cropInfo['y']); //begin position of frame crop by Y
         //$cropInfo['ratio'] = $cropInfo['ratio'] == 0 ? 1.0 : (float)$cropInfo['ratio']; //ratio image. We don't use in this example
@@ -301,8 +261,8 @@ public function afterSave()
         }
 
         //saving thumbnail
-        $newSizeThumb = new Box($cropInfo['dw'], $cropInfo['dh']);
-        $cropSizeThumb = new Box($cropSettings[$i]['width'], $cropSettings[$i]['height']); //frame size of crop
+        $newSizeThumb = new Box($cropInfo['dWidth'], $cropInfo['dHeight']);
+        $cropSizeThumb = new Box($variants[$i]['width'], $variants[$i]['height']); //frame size of crop
         $cropPointThumb = new Point($cropInfo['x'], $cropInfo['y']);
         $pathThumbImage = Yii::getAlias('@path/to/save/image') . '/thumb_' . $this->id . '.' . $i . '.' . $this->image->getExtension();  
 
@@ -322,25 +282,7 @@ public function afterSave()
 
 #### Use resizing
 
-If you want use resizing then you need pointer min and max size of image to "cropSettings" of "optionsCropbox".
-
-```php
-echo $form->field($model, 'image')->widget(Cropbox::className(), [
-    'attributeCropInfo' => 'crop_info',
-    'optionsCropbox' => [
-        'boxWidth' => 400,
-        'boxHeight' => 300,
-        'cropSettings' => [
-            [
-                'width' => 350,
-                'height' => 200,
-                'minHeight' => 150,
-                'maxHeight' => 300,
-            ],
-        ],
-    ],
-]);
-```
+If you want use resizing then you need pointer min and max size of image to "variants" of "pluginOptions".
 
 To model:
 
@@ -350,12 +292,12 @@ $image = Image::getImagine()->open($this->image->tempName);
 
 // rendering information about crop of ONE option 
 $cropInfo = Json::decode($this->crop_info)[0];
-$cropInfo['dw'] = (int)$cropInfo['dw']; //new width image
-$cropInfo['dh'] = (int)$cropInfo['dh']; //new height image
+$cropInfo['dWidth'] = (int)$cropInfo['dWidth']; //new width image
+$cropInfo['dHeight'] = (int)$cropInfo['dHeight']; //new height image
 $cropInfo['x'] = abs($cropInfo['x']); //begin position of frame crop by X
 $cropInfo['y'] = abs($cropInfo['y']); //begin position of frame crop by Y
-$cropInfo['w'] = (int)$cropInfo['w']; //width of cropped image
-$cropInfo['h'] = (int)$cropInfo['h']; //height of cropped image
+$cropInfo['width'] = (int)$cropInfo['width']; //width of cropped image
+$cropInfo['height'] = (int)$cropInfo['height']; //height of cropped image
 // Properties bolow we don't use in this example
 //$cropInfo['ratio'] = $cropInfo['ratio'] == 0 ? 1.0 : (float)$cropInfo['ratio']; //ratio image. 
 
@@ -363,7 +305,7 @@ $cropInfo['h'] = (int)$cropInfo['h']; //height of cropped image
 $oldImages = FileHelper::findFiles(Yii::getAlias('@path/to/save/image'), [
     'only' => [
         $this->id . '.*',
-        'thumb_' . $id . '.*',
+        'thumb_' . $this->id . '.*',
     ], 
 ]);
 for ($i = 0; $i != count($oldImages); $i++) {
@@ -371,8 +313,8 @@ for ($i = 0; $i != count($oldImages); $i++) {
 }
 
 //saving thumbnail
-$newSizeThumb = new Box($cropInfo['dw'], $cropInfo['dh']);
-$cropSizeThumb = new Box($cropInfo['w'], $cropInfo['h']); //frame size of crop
+$newSizeThumb = new Box($cropInfo['dWidth'], $cropInfo['dHeight']);
+$cropSizeThumb = new Box($cropInfo['width'], $cropInfo['height']); //frame size of crop
 $cropPointThumb = new Point($cropInfo['x'], $cropInfo['y']);
 $pathThumbImage = Yii::getAlias('@path/to/save/image') . '/thumb_' . $this->id . '.' . $this->image->getExtension();  
 

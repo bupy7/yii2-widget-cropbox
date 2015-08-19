@@ -19,3 +19,10 @@ div.cropbox .btn-file input[type=file] {
     cursor: inherit;
     display: block;
 }
+div.cropbox .cropped {
+    padding: 10px 0 5px 0;
+}
+div.cropbox .img-thumbnail {
+    margin-right: 5px;
+    margin-bottom: 5px;
+}

@@ -49,9 +49,9 @@ class Cropbox extends Widget
     /**
      * @string URL to image for display before upload to original URL.
      */
-    public $originalUrl;
+    public $originalImageUrl;
     /**
-     * @var mixed URL to images for display before upload to preview URL.
+     * @var array URL to images for display before upload to preview URL.
      * 
      * Example:
      * [
@@ -61,7 +61,7 @@ class Cropbox extends Widget
      * 
      * or simply string to image.
      */
-    public $previewUrl;
+    public $previewImagesUrl;
     /**
      * @var string Path to view of cropbox field.
      * 
