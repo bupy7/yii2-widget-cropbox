@@ -14,7 +14,7 @@ use yii\base\InvalidConfigException;
  * Class file CropboxWidget.
  * Crop image via jQuery before upload image.
  *
- * GitHub repository this widget: https://github.com/bupy7/yii2-cropbox
+ * GitHub repository this widget: https://github.com/bupy7/yii2-widget-cropbox
  * 
  * @author Vasilij "BuPy7" Belosludcev http://mihaly4.ru
  * @since 1.0.0
