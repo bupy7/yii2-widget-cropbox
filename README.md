@@ -1,6 +1,10 @@
 yii2-widget-cropbox
 ============
 
+[![Latest Stable Version](https://poser.pugx.org/bupy7/yii2-widget-cropbox/v/stable)](https://packagist.org/packages/bupy7/yii2-widget-cropbox) 
+[![Total Downloads](https://poser.pugx.org/bupy7/yii2-widget-cropbox/downloads)](https://packagist.org/packages/bupy7/yii2-widget-cropbox) 
+[![License](https://poser.pugx.org/bupy7/yii2-widget-cropbox/license)](https://packagist.org/packages/bupy7/yii2-widget-cropbox)
+
 This is widget wrapper of [jquery-cropbox](https://github.com/bupy7/jquery-cropbox). 
 
 This widget allows crop image before upload to server and send informations about crop in JSON format.
