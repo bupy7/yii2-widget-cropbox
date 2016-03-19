@@ -3,7 +3,7 @@
     "description": "This is widget wrapper of https://github.com/bupy7/jquery-cropbox. This widget allows crop image before upload to server and send informations about crop in JSON format.",
     "keywords": ["yii2", "extension", "widget", "crop image", "image"],
     "homepage": "https://github.com/bupy7/yii2-widget-cropbox",
-    "version": "4.0.0",
+    "version": "4.1.0",
     "type": "yii2-extension",
     "license": "BSD 3-Clause",
     "authors": [
