@@ -1,6 +1,11 @@
 yii2-widget-cropbox
 ===================
 
+v4.1.2 [2016-09-28]
+-------------------
+
+- Added Spanish translation. (pablonunez-dev)
+
 v4.1.1 [2016-05-18]
 -------------------
 
