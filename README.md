@@ -9,7 +9,7 @@ This is widget wrapper of [jquery-cropbox](https://github.com/bupy7/jquery-cropb
 
 This widget allows crop image before upload to server and send informations about crop in JSON format.
 
-##Functional
+## Functional
 
 - Simple! =)
 - Cropping image before upload to server.
@@ -24,7 +24,7 @@ This widget allows crop image before upload to server and send informations abou
 
 [jquery-cropbox README](https://github.com/bupy7/jquery-cropbox/blob/master/README.md)
 
-##Installation
+## Installation
 The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
 
 Either run
@@ -45,7 +45,7 @@ If you use v2.2 then go to [v2.2](https://github.com/bupy7/yii2-widget-cropbox/t
 
 If you use v1.0 then go to [v1.0](https://github.com/bupy7/yii2-widget-cropbox/tree/v1.0).
 
-##How use
+## How use
 
 For example I will be use **Imagine extensions for Yii2** https://github.com/yiisoft/yii2-imagine . You can use something other.
 
@@ -175,9 +175,9 @@ public function afterSave($insert, $changedAttributes)
 ...
 ```
 
-##Configuration
+## Configuration
 
-####Preview exist image of item
+#### Preview exist image of item
 
 If you want showing uploaded and cropped image, you must add following code:
 
@@ -195,7 +195,7 @@ echo $form->field($model, 'image')->widget(Cropbox::className(), [
 
 If you click to preview image then you see original image.
 
-####Crop with save real size of image
+#### Crop with save real size of image
 
 The difference from previous methods in that we do not resize of image before crop it. Here we crop of image as we see it in editor box with saving real size.
 
@@ -219,7 +219,7 @@ $image->crop($cropPointLarge, $cropSizeLarge)
     ->save($pathLargeImage, ['quality' => $module->qualityLarge]);
 ```
 
-####Cropping more once option
+#### Cropping more once option
 
 If you set few veriants crop to plugin, then you need make following:
 
@@ -330,7 +330,7 @@ $image->resize($newSizeThumb)
 $this->image->saveAs(Yii::getAlias('@path/to/save/image') . $this->id . '.' . $this->image->getExtension());
 ```
 
-##License
+## License
 
 yii2-widget-cropbox is released under the BSD 3-Clause License.
 
