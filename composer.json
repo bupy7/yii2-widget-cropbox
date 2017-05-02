@@ -1,11 +1,11 @@
 {
     "name": "bupy7/yii2-widget-cropbox",
-    "description": "This is widget wrapper of https://github.com/bupy7/jquery-cropbox. This widget allows crop image before upload to server and send informations about crop in JSON format.",
-    "keywords": ["yii2", "extension", "widget", "crop image", "image"],
+    "description": "This is widget wrapper of https://github.com/bupy7/js-cropbox. This widget allows crop image before to upload to server and send informations about crop as JSON string.",
+    "keywords": ["yii2", "extension", "widget", "crop", "image"],
     "homepage": "https://github.com/bupy7/yii2-widget-cropbox",
-    "version": "4.1.1",
+    "version": "5.0.0",
     "type": "yii2-extension",
-    "license": "BSD 3-Clause",
+    "license": "BSD-3-Clause",
     "authors": [
         {
             "name": "Vasilij Belosludcev",
@@ -16,7 +16,7 @@
     "minimum-stability": "stable",
     "require": {
         "yiisoft/yii2-bootstrap": "*",
-        "bower-asset/jq-cropbox": "1.0.*"
+        "bower-asset/js-cropbox": "0.9.1"
     },
     "autoload": {
         "psr-4": {

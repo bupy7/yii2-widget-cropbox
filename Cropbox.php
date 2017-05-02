@@ -3,51 +3,28 @@
 namespace bupy7\cropbox;
 
 use Yii;
-use yii\base\Widget;
+use yii\widgets\InputWidget;
 use yii\helpers\Html;
 use yii\helpers\Json;
 use yii\web\View;
-use yii\base\Model;
 use yii\base\InvalidConfigException;
 
 /**
- * Class file CropboxWidget.
- * Crop image via jQuery before upload image.
- *
- * GitHub repository this widget: https://github.com/bupy7/yii2-widget-cropbox
- * 
  * @author Vasilij "BuPy7" Belosludcev http://mihaly4.ru
  * @since 1.0.0
  */
-class Cropbox extends Widget
+class Cropbox extends InputWidget
 {
-    /**
-     * @var Model the data model that this widget is associated with.
-     */
-    public $model;
-    /**
-     * @var string the model attribute that this widget is associated with.
-     */
-    public $attribute;
-    /**
-     * @var string the input name. This must be set if [[model]] and [[attribute]] are not set.
-     */
-    public $name;
-    /**
-     * @var array the HTML attributes for the input tag.
-     * @see \yii\helpers\Html::renderTagAttributes() for details on how attributes are being rendered.
-     */
-    public $options = [];
     /**
      * @var array Attribute name that content information about crop image.
      */
     public $attributeCropInfo;
     /**
-     * @var array Options of jQuery plugin.
+     * @var array Options of js-cropbox plugin.
      */
     public $pluginOptions = [];
     /**
-     * @string URL to image for display before upload to original URL.
+     * @var string URL to image for display before upload to original URL.
      */
     public $originalImageUrl;
     /**
@@ -63,58 +40,41 @@ class Cropbox extends Widget
      */
     public $previewImagesUrl;
     /**
-     * @var string Path to view of cropbox field.
-     * 
-     * Example: '@app/path/to/view'
+     * @var string Path to view of cropbox field. Example: '@app/path/to/view'
      */
     public $pathToView = 'field';
     
     /**
-     * @inheritdoc
      * @throws InvalidConfigException
      */
     public function init()
     {
-        if ($this->name === null && !$this->hasModel()) {
-            throw new InvalidConfigException("Either 'name', or 'model' and 'attribute' properties must be specified.");
-        }
-        if (!isset($this->options['id'])) {
-            $this->options['id'] = $this->hasModel() ? Html::getInputId($this->model, $this->attribute) : false;
-        }
-        parent::init();
-        
+        parent::init();        
         WidgetAsset::register($this->view);
-        $this->registerTranslations();
-        
-        $this->options = array_merge([
-            'accept' => 'image/*',
-        ], $this->options);
+        $this->registerTranslations();      
+        $this->options = array_merge(['accept' => 'image/*'], $this->options);
         $this->pluginOptions = array_merge([
             'selectors' => [
-                'inputFile' => '#' . $this->id . ' input[type="file"]',
-                'btnCrop' => '#' . $this->id . ' .btn-crop',
-                'btnReset' => '#' . $this->id . ' .btn-reset',
-                'resultContainer' => '#' . $this->id . ' .cropped',
-                'messageBlock' => '#' . $this->id . ' .alert',
+                'inputFile' => sprintf('#%s input[type="file"]', $this->id),
+                'btnCrop' => sprintf('#%s .btn-crop', $this->id),
+                'btnReset' => sprintf('#%s .btn-reset', $this->id),
+                'resultContainer' => sprintf('#%s .cropped', $this->id),
+                'messageBlock' => sprintf('#%s .alert', $this->id),
             ],
             'imageOptions' => [
                 'class' => 'img-thumbnail',
             ],
         ], $this->pluginOptions);
-        $this->pluginOptions['selectors']['inputInfo'] = '#' 
-            . $this->id 
-            . ' input[name="' 
-            . Html::getInputName($this->model, $this->attributeCropInfo) 
-            . '"]';
-        $optionsCropbox = Json::encode($this->pluginOptions);
-        
-        $js = "$('#{$this->id}').cropbox({$optionsCropbox});";
+        $inputInfoName = $this->attributeCropInfo;
+        if ($this->hasModel()) {
+            $inputInfoName = Html::getInputName($this->model, $inputInfoName);
+        }
+        $this->pluginOptions['selectors']['inputInfo'] = sprintf('#%s input[name="%s"]', $this->id, $inputInfoName);
+        $optionsCropbox = Json::encode($this->pluginOptions);       
+        $js = "$('#{$this->options['id']}').cropbox({$optionsCropbox});";
         $this->view->registerJs($js, View::POS_READY);
     }
     
-    /**
-     * @inheritdoc
-     */
     public function run()
     {
         return $this->render($this->pathToView);
@@ -147,13 +107,5 @@ class Cropbox extends Widget
                 'bupy7/cropbox' => 'core.php',
             ],
         ];
-    }
-    
-    /**
-     * @return boolean whether this widget is associated with a data model.
-     */
-    protected function hasModel()
-    {
-        return $this->model instanceof Model && $this->attribute !== null;
     }
 }

@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use bupy7\cropbox\Cropbox;
 ?> 
-<div id="<?= $this->context->id; ?>" class="cropbox">
+<div id="<?= $this->context->id; ?>" class="container-cropbox">
     <div class="alert alert-info"></div>
     <div class="workarea-cropbox">
         <div class="bg-cropbox">
@@ -16,9 +16,14 @@ use bupy7\cropbox\Cropbox;
     </div>
     <div class="btn-group">
         <span class="btn btn-primary btn-file">
-        <?= '<i class="glyphicon glyphicon-folder-open"></i> '
-            . Cropbox::t('Browse') 
-            . Html::activeFileInput($this->context->model, $this->context->attribute, $this->context->options); ?>
+            <?php
+            echo '<i class="glyphicon glyphicon-folder-open"></i> ' . Cropbox::t('Browse');
+            if ($this->context->hasModel()) {
+                echo Html::activeFileInput($this->context->model, $this->context->attribute, $this->context->options);
+            } else {
+                echo Html::fileInput($this->context->name, $this->context->value, $this->context->options);
+            }
+            ?>
         </span>
         <?= Html::button('<i class="glyphicon glyphicon-scissors"></i> ' . Cropbox::t('Crop'), [
             'class' => 'btn btn-success btn-crop',
