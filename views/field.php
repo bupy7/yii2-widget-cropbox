@@ -18,11 +18,11 @@ use bupy7\cropbox\Cropbox;
         <span class="btn btn-primary btn-file">
             <?php
             echo '<i class="glyphicon glyphicon-folder-open"></i> ' . Cropbox::t('Browse');
-            if ($this->context->hasModel()) {
+            //if ($this->context->hasModel()) {
                 echo Html::activeFileInput($this->context->model, $this->context->attribute, $this->context->options);
-            } else {
-                echo Html::fileInput($this->context->name, $this->context->value, $this->context->options);
-            }
+            //} else {
+            //    echo Html::fileInput($this->context->name, $this->context->value, $this->context->options);
+            //}
             ?>
         </span>
         <?= Html::button('<i class="glyphicon glyphicon-scissors"></i> ' . Cropbox::t('Crop'), [
@@ -32,7 +32,7 @@ use bupy7\cropbox\Cropbox;
             'class' => 'btn btn-warning btn-reset',
         ]); ?>
     </div>
-    <div class="cropped">
+    <div class="cropped-images-cropbox">
         <p>
             <?php 
             if (!empty($this->context->originalImageUrl)) {

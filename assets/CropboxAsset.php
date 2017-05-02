@@ -1,12 +1,12 @@
 <?php
 
-namespace bupy7\cropbox;
+namespace bupy7\cropbox\assets;
 
 use yii\web\AssetBundle;
 
 /**
  * @author Vasilij Belosludcev <bupy765@gmail.com>
- * @since 1.0.0
+ * @since 5.0.0
  */
 class CropboxAsset extends AssetBundle
 {

@@ -8,6 +8,7 @@ use yii\helpers\Html;
 use yii\helpers\Json;
 use yii\web\View;
 use yii\base\InvalidConfigException;
+use bupy7\cropbox\assets\WidgetAsset;
 
 /**
  * @author Vasilij "BuPy7" Belosludcev http://mihaly4.ru
