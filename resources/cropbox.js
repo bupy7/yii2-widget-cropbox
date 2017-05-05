@@ -1,17 +1,20 @@
 (function($, Cropbox) {
     $.fn.cropbox = function(options) {
-        this.each(function() {
-            console.log(this);
-        });
-//        if (typeof options === 'string') {
-//            var method = options.replace(/^[_]*/, '');
-//            if (Cropbox.prototype[method]) {
-//                //return Cropbox.apply(this, Array.prototype.slice.call(arguments, 1));
-//            }
-//        } else if (typeof options === 'object' || ! options) {
-//            return .init.apply(this, arguments);
-//        } else {
-//            $.error('Method "' +  options + '" not exists.');
-//        }
+        // call public method
+        if (typeof options === 'string') {
+            var method = options.replace(/^[_]*/, '');
+            if (Cropbox.prototype[method]) {
+                var cb = $(this).data('cropbox');
+                return cb[method].apply(cb, Array.prototype.slice.call(arguments, 1));
+            }
+        // create new instance of Cropbox class
+        } else if (typeof options === 'object' || ! options) {
+            return this.each(function() {
+                $(this).data('cropbox', new Cropbox(this, options));
+            });
+        // throw an error
+        } else {
+            $.error('Method Cropbox::"' +  options + '()" not exists.');
+        }
     };
 })(jQuery, Cropbox);

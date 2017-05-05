@@ -16,7 +16,7 @@
     "minimum-stability": "stable",
     "require": {
         "yiisoft/yii2-bootstrap": "*",
-        "bower-asset/js-cropbox": "0.9.1"
+        "bower-asset/js-cropbox": "0.10.0"
     },
     "autoload": {
         "psr-4": {

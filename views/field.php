@@ -2,18 +2,9 @@
 
 use yii\helpers\Html;
 use bupy7\cropbox\Cropbox;
-?> 
-<div id="<?= $this->context->id; ?>" class="container-cropbox">
-    <div class="alert alert-info"></div>
-    <div class="workarea-cropbox">
-        <div class="bg-cropbox">
-            <img class="image-cropbox">
-            <div class="membrane-cropbox"></div>
-        </div>
-        <div class="frame-cropbox">
-            <div class="resize-cropbox"></div>
-        </div>
-    </div>
+?>
+<div class="container-cropbox">
+    <div id="<?= $this->context->id; ?>"></div>
     <div class="btn-group">
         <span class="btn btn-primary btn-file">
             <?php

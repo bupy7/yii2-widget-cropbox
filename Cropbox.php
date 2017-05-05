@@ -71,8 +71,8 @@ class Cropbox extends InputWidget
             $inputInfoName = Html::getInputName($this->model, $inputInfoName);
         }
         $this->pluginOptions['selectors']['inputInfo'] = sprintf('#%s input[name="%s"]', $this->id, $inputInfoName);
-        $optionsCropbox = Json::encode($this->pluginOptions);       
-        $js = "$('#{$this->options['id']}').cropbox({$optionsCropbox});";
+        $optionsCropbox = Json::encode($this->pluginOptions);
+        $js = "$('#{$this->id}').cropbox({$optionsCropbox});";
         $this->view->registerJs($js, View::POS_READY);
     }
     
