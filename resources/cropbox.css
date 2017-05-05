@@ -1,10 +1,10 @@
 @charset "UTF-8";
 
-.container-cropbox .btn-file {
+.cropbox .btn-file {
     position: relative;
     overflow: hidden;
 }
-.container-cropbox .btn-file input[type=file] {
+.cropbox .btn-file input[type=file] {
     position: absolute;
     top: 0;
     right: 0;
@@ -22,7 +22,7 @@
 .cropped-images-cropbox {
     padding: 10px 0 5px 0;
 }
-.container-cropbox .img-thumbnail {
+.cropped-images-cropbox .img-thumbnail {
     margin-right: 5px;
     margin-bottom: 5px;
 }

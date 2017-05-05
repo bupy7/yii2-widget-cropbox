@@ -7,7 +7,6 @@ use yii\widgets\InputWidget;
 use yii\helpers\Html;
 use yii\helpers\Json;
 use yii\web\View;
-use yii\base\InvalidConfigException;
 use bupy7\cropbox\assets\WidgetAsset;
 
 /**
@@ -17,11 +16,24 @@ use bupy7\cropbox\assets\WidgetAsset;
 class Cropbox extends InputWidget
 {
     /**
-     * @var array Attribute name that content information about crop image.
+     * @var string Attribute name that content information about cropped images.
+     * @since 5.0.0
      */
-    public $attributeCropInfo;
+    public $croppedDataAttribute;
     /**
-     * @var array Options of js-cropbox plugin.
+     * @var string Input name that content information about cropped images.
+     * @since 5.0.0
+     */
+    public $croppedDataName;
+    /**
+     * @var string Input value with information about cropped images.
+     * @since 5.0.0
+     */
+    public $croppedDataValue;
+    /**
+     * @var array Options of plugin:
+     * - variants:
+     * - selectors:
      */
     public $pluginOptions = [];
     /**
@@ -45,34 +57,14 @@ class Cropbox extends InputWidget
      */
     public $pathToView = 'field';
     
-    /**
-     * @throws InvalidConfigException
-     */
     public function init()
     {
         parent::init();        
         WidgetAsset::register($this->view);
         $this->registerTranslations();      
-        $this->options = array_merge(['accept' => 'image/*'], $this->options);
-        $this->pluginOptions = array_merge([
-            'selectors' => [
-                'inputFile' => sprintf('#%s input[type="file"]', $this->id),
-                'btnCrop' => sprintf('#%s .btn-crop', $this->id),
-                'btnReset' => sprintf('#%s .btn-reset', $this->id),
-                'resultContainer' => sprintf('#%s .cropped', $this->id),
-                'messageBlock' => sprintf('#%s .alert', $this->id),
-            ],
-            'imageOptions' => [
-                'class' => 'img-thumbnail',
-            ],
-        ], $this->pluginOptions);
-        $inputInfoName = $this->attributeCropInfo;
-        if ($this->hasModel()) {
-            $inputInfoName = Html::getInputName($this->model, $inputInfoName);
-        }
-        $this->pluginOptions['selectors']['inputInfo'] = sprintf('#%s input[name="%s"]', $this->id, $inputInfoName);
+        $this->configuration();
         $optionsCropbox = Json::encode($this->pluginOptions);
-        $js = "$('#{$this->id}').cropbox({$optionsCropbox});";
+        $js = "$('#{$this->id} .plugin').cropbox({$optionsCropbox});";
         $this->view->registerJs($js, View::POS_READY);
     }
     
@@ -108,5 +100,31 @@ class Cropbox extends InputWidget
                 'bupy7/cropbox' => 'core.php',
             ],
         ];
+    }
+
+    /**
+     * Configuration the widget.
+     * @since 5.0.0
+     */
+    protected function configuration()
+    {
+        $this->options = array_merge(['accept' => 'image/*'], $this->options);
+        $croppedDataInput = $this->croppedDataAttribute;
+        if ($this->hasModel()) {
+            $croppedDataInput = Html::getInputName($this->model, $croppedDataInput);
+        } else {
+            $croppedDataInput = $this->croppedDataName;
+        }
+        $this->pluginOptions = array_merge([
+            'selectors' => [
+                'fileInput' => sprintf('#%s input[type="file"]', $this->id),
+                'btnCrop' => sprintf('#%s .btn-crop', $this->id),
+                'btnReset' => sprintf('#%s .btn-reset', $this->id),
+                'btnScaleIn' => sprintf('#%s .btn-scale-in', $this->id),
+                'btnScaleOut' => sprintf('#%s .btn-scale-out', $this->id),
+                'croppedContainer' => sprintf('#%s .cropped-images-cropbox', $this->id),
+                'croppedDataInput' => sprintf('#%s input[name="%s"]', $this->id, $croppedDataInput),
+            ],
+        ], $this->pluginOptions);
     }
 }
