@@ -1,8 +1,33 @@
 (function($, Cropbox) {
+    $.fn.cropbox = function(options) {
+        // call public method
+        if (typeof options === 'string') {
+            var method = options.replace(/^[_]*/, '');
+            if (Cropbox.prototype[method]) {
+                var cb = $(this).data('cropbox');
+                return cb[method].apply(cb, Array.prototype.slice.call(arguments, 1));
+            }
+        // create new instance of Cropbox class
+        } else if (typeof options === 'object' || ! options) {
+            var selectors = options.selectors,
+                messages = options.messages || [];
+            delete options.selectors;
+            delete options.messages;
+            return this.each(function() {
+                $(this).data('cropbox', new Cropbox(this, options));
+                attachEvents.call(this, selectors, messages);
+            });
+        // throw an error
+        } else {
+            $.error('Method Cropbox::"' +  options + '()" not exists.');
+        }
+    };
+    
     /**
      * @param {Object} s
+     * @param {Array} m
      */
-    function attachEvents(s) {
+    function attachEvents(s, m) {
         var $th = $(this);
         // scaling
         $(s.btnScaleIn).on('click', function() {
@@ -67,27 +92,27 @@
             $(s.btnScaleOut).removeAttr('disabled');
             $(s.btnCrop).removeAttr('disabled');
         });
-    };
-
-    $.fn.cropbox = function(options) {
-        // call public method
-        if (typeof options === 'string') {
-            var method = options.replace(/^[_]*/, '');
-            if (Cropbox.prototype[method]) {
-                var cb = $(this).data('cropbox');
-                return cb[method].apply(cb, Array.prototype.slice.call(arguments, 1));
+        // messages
+        function showMessage(reset) {
+            var index = 0;
+            if (typeof $th.data('mi-cropbox') !== 'undefined' && !(reset || false)) {
+                index = $th.data('mi-cropbox');
             }
-        // create new instance of Cropbox class
-        } else if (typeof options === 'object' || ! options) {
-            return this.each(function() {
-                var selectors = options.selectors;
-                delete options.selectors;
-                $(this).data('cropbox', new Cropbox(this, options));
-                attachEvents.call(this, selectors);
-            });
-        // throw an error
-        } else {
-            $.error('Method Cropbox::"' +  options + '()" not exists.');
+            if (typeof m[index] !== 'undefined') {
+                $(s.messageContainer).html(m[index]).show();
+            } else {
+                $(s.messageContainer).hide();
+            }
+            $th.data('mi-cropbox', ++index);
         }
-    };
+        $th.on('cb:cropped', function() {
+            showMessage();
+        });
+        $(s.fileInput).on('change', function() {
+            showMessage(true);
+        });
+        $th.on('cb:reset', function() {
+            $(s.messageContainer).hide();
+        });
+    }
 })(jQuery, Cropbox);

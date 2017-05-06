@@ -11,9 +11,9 @@ use bupy7\cropbox\assets\WidgetAsset;
 
 /**
  * @author Vasilij "BuPy7" Belosludcev http://mihaly4.ru
- * @since 1.0.0
+ * @since 5.0.0
  */
-class Cropbox extends InputWidget
+class CropboxWidget extends InputWidget
 {
     /**
      * @var string Attribute name that content information about cropped images.
@@ -32,8 +32,17 @@ class Cropbox extends InputWidget
     public $croppedDataValue;
     /**
      * @var array Options of plugin:
-     * - variants:
-     * - selectors:
+     * - (array) variants: Variants of cropping image. More info: https://github.com/bupy7/js-cropbox#object-variants
+     * - (array) [selectors]: CSS selectors for attach events of cropbox.
+     *      # (string) fileInput
+     *      # (string) btnCrop
+     *      # (string) btnReset
+     *      # (string) btnScaleIn
+     *      # (string) btnScaleOut
+     *      # (string) croppedContainer
+     *      # (string) croppedDataInput
+     *      # (string) messageContainer
+     * - (array) [messages]: Alert messages for each a variant.
      */
     public $pluginOptions = [];
     /**
@@ -62,15 +71,16 @@ class Cropbox extends InputWidget
         parent::init();        
         WidgetAsset::register($this->view);
         $this->registerTranslations();      
-        $this->configuration();
-        $optionsCropbox = Json::encode($this->pluginOptions);
-        $js = "$('#{$this->id} .plugin').cropbox({$optionsCropbox});";
-        $this->view->registerJs($js, View::POS_READY);
+        $this->configuration();       
     }
     
     public function run()
     {
-        return $this->render($this->pathToView);
+        $pluginOptions = Json::encode($this->pluginOptions);
+        $this->view->registerJs("$('#{$this->id} .plugin').cropbox({$pluginOptions});", View::POS_READY);
+        return $this->render($this->pathToView, [
+            'hasModel' => $this->hasModel(),
+        ]);
     }
         
     /**
@@ -124,6 +134,7 @@ class Cropbox extends InputWidget
                 'btnScaleOut' => sprintf('#%s .btn-scale-out', $this->id),
                 'croppedContainer' => sprintf('#%s .cropped-images-cropbox', $this->id),
                 'croppedDataInput' => sprintf('#%s input[name="%s"]', $this->id, $croppedDataInput),
+                'messageContainer' => sprintf('#%s .message-container-cropbox', $this->id),
             ],
         ], $this->pluginOptions);
     }
