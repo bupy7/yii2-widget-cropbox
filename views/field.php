@@ -46,12 +46,9 @@ use bupy7\cropbox\CropboxWidget;
             ?>
         </p>
         <?php
-        if (!empty($this->context->previewImagesUrl)) {
-            foreach ($this->context->previewImagesUrl as $url) {
-                if (!empty($url)) {
-                    echo Html::img($url, ['class' => 'img-thumbnail']);
-                }
-            }
+        $croppedImagesUrl = (array) $this->context->croppedImagesUrl;
+        foreach ($croppedImagesUrl as $url) {
+            echo Html::img($url, ['class' => 'img-thumbnail']);
         }
         ?>
     </div>

@@ -17,17 +17,14 @@ class CropboxWidget extends InputWidget
 {
     /**
      * @var string Attribute name that content information about cropped images.
-     * @since 5.0.0
      */
     public $croppedDataAttribute;
     /**
      * @var string Input name that content information about cropped images.
-     * @since 5.0.0
      */
     public $croppedDataName;
     /**
      * @var string Input value with information about cropped images.
-     * @since 5.0.0
      */
     public $croppedDataValue;
     /**
@@ -60,7 +57,7 @@ class CropboxWidget extends InputWidget
      * 
      * or simply string to image.
      */
-    public $previewImagesUrl;
+    public $croppedImagesUrl;
     /**
      * @var string Path to view of cropbox field. Example: '@app/path/to/view'
      */
@@ -114,7 +111,6 @@ class CropboxWidget extends InputWidget
 
     /**
      * Configuration the widget.
-     * @since 5.0.0
      */
     protected function configuration()
     {

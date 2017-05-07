@@ -1,30 +1,22 @@
 yii2-widget-cropbox
-============
+===================
 
 [![Latest Stable Version](https://poser.pugx.org/bupy7/yii2-widget-cropbox/v/stable)](https://packagist.org/packages/bupy7/yii2-widget-cropbox) 
 [![Total Downloads](https://poser.pugx.org/bupy7/yii2-widget-cropbox/downloads)](https://packagist.org/packages/bupy7/yii2-widget-cropbox) 
 [![License](https://poser.pugx.org/bupy7/yii2-widget-cropbox/license)](https://packagist.org/packages/bupy7/yii2-widget-cropbox)
 
-This is widget wrapper of [jquery-cropbox](https://github.com/bupy7/jquery-cropbox). 
+This is Yii2 widget wrapper for [js-cropbox](https://github.com/bupy7/js-cropbox).
 
-This widget allows crop image before upload to server and send informations about crop in JSON format.
+Demo and documentation of plugin
+--------------------------------
 
-## Functional
+[js-cropbox Demo](http://bupy7.github.io/js-cropbox/)
 
-- Simple! =)
-- Cropping image before upload to server.
-- Cropping more **once** option.
-- Labels for settings of crop.
-- You can use custom view.
-- Resizing cropping image on-the-fly.
+[js-cropbox README](https://github.com/bupy7/js-cropbox/blob/master/README.md)
 
-## Demo and documentation of plugin
+Installation
+------------
 
-[jQuery-Cropbox Demo](http://bupy7.github.io/jquery-cropbox/)
-
-[jquery-cropbox README](https://github.com/bupy7/jquery-cropbox/blob/master/README.md)
-
-## Installation
 The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
 
 Either run
@@ -39,17 +31,44 @@ or add
 
 to the **require** section of your **composer.json** file.
 
+If you use v4.1.2 then go to [v4.1.2](https://github.com/bupy7/yii2-widget-cropbox/tree/v4.1.2).
+
 If you use v3.0.1 then go to [v3.0.1](https://github.com/bupy7/yii2-widget-cropbox/tree/v3.0.1).
 
 If you use v2.2 then go to [v2.2](https://github.com/bupy7/yii2-widget-cropbox/tree/v2.2).
 
 If you use v1.0 then go to [v1.0](https://github.com/bupy7/yii2-widget-cropbox/tree/v1.0).
 
-## How use
+Options
+-------
 
-For example I will be use **Imagine extensions for Yii2** https://github.com/yiisoft/yii2-imagine . You can use something other.
+#### `$pluginOptions`
 
-Add to action of controller
+Contain configuration of js-cropbox wrapper.
+
+##### (array) `$variants`: Variants of cropping image.
+More info: https://github.com/bupy7/js-cropbox#object-variants
+
+##### (array) `[$selectors]`: CSS selectors for attach events of cropbox.
+
+- (string) fileInput
+- (string) btnCrop
+- (string) btnReset
+- (string) btnScaleIn
+- (string) btnScaleOut
+- (string) croppedContainer
+- (string) croppedDataInput
+- (string) messageContainer
+
+##### (array) `[$messages]`: Alert messages for each a variant.
+
+Usage
+-----
+
+For example, I will use **Imagine extensions for Yii2** https://github.com/yiisoft/yii2-imagine . You can use something other.
+
+**Add in action to your controller:**
+
 ```php
 ...
 
@@ -66,9 +85,10 @@ if ($model->load(Yii::$app->request->post()))
 ...
 ```
 
-Add to view
+**Add to your view:**
+
 ```php
-use bupy7\cropbox\Cropbox;
+use bupy7\cropbox\CropboxWidget;
 
 $form = ActiveForm::begin([
     'options' => ['enctype'=>'multipart/form-data'],
@@ -76,14 +96,15 @@ $form = ActiveForm::begin([
 
 ...
 
-echo $form->field($model, 'image')->widget(Cropbox::className(), [
-    'attributeCropInfo' => 'crop_info',
+echo $form->field($model, 'image')->widget(CropboxWidget::className(), [
+    'croppedDataAttribute' => 'crop_info',
 ]);
 
 ...
 ```
 
-Add to model:
+**Add to your model:**
+
 ```php
 ...
 
@@ -175,31 +196,33 @@ public function afterSave($insert, $changedAttributes)
 ...
 ```
 
-## Configuration
+Configuration
+-------------
 
-#### Preview exist image of item
+### Preview exist image of item
 
-If you want showing uploaded and cropped image, you must add following code:
+If you want to show uploaded and cropped image, you must add following code:
 
 ```php
-echo $form->field($model, 'image')->widget(Cropbox::className(), [
+echo $form->field($model, 'image')->widget(CropboxWidget::className(), [
 
     ...
 
-    'previewUrl' => [
+    'croppedImagesUrl' => [
         'url/to/small/image'
     ],
-    'originalUrl' => 'url/to/original/image', 
+    'originalImageUrl' => 'url/to/original/image',
 ]);
 ```
 
-If you click to preview image then you see original image.
+If you will click on preview image you see original image.
 
-#### Crop with save real size of image
+### Crop with save real size of image
 
-The difference from previous methods in that we do not resize of image before crop it. Here we crop of image as we see it in editor box with saving real size.
+Difference from previous methods in that we don't resize image before crop it.
+We cropped image as we see it in editor box with saving real size.
 
-For this we will use of property `ratio` from `$cropInfo`.
+For this we will use property `ratio` from `$cropInfo`.
 
 ```php
 $cropInfo = Json::decode($this->crop_info)[0];
@@ -219,11 +242,11 @@ $image->crop($cropPointLarge, $cropSizeLarge)
     ->save($pathLargeImage, ['quality' => $module->qualityLarge]);
 ```
 
-#### Cropping more once option
+### Cropping more once option
 
-If you set few veriants crop to plugin, then you need make following:
+If you will set few veriants crop on plugin you need make following:
 
-Model:
+**In model:**
 
 ```php
 ...
@@ -284,11 +307,11 @@ public function afterSave($insert, $changedAttributes)
 
 ```
 
-#### Use resizing
+### Use resizing
 
-If you want use resizing then you need pointer min and max size of image to "variants" of "pluginOptions".
+If you want use resizing you need pointer min and max size of image in `variants` of `pluginOptions`.
 
-To model:
+**In model:**
 
 ```php
 // open image
