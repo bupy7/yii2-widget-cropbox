@@ -1,7 +1,7 @@
 yii2-widget-cropbox
 ===================
 
-v5.0.0 [2017-05-07]
+v5.0.0 [2017-05-12]
 -------------------
 
 - Fixed headers style of markdown. (bryant1410)
