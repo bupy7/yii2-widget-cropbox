@@ -1,38 +1,41 @@
 <?php
 
 use yii\helpers\Html;
-use bupy7\cropbox\Cropbox;
-?> 
+use bupy7\cropbox\CropboxWidget;
+?>
 <div id="<?= $this->context->id; ?>" class="cropbox">
-    <div class="alert alert-info"></div>
-    <div class="workarea-cropbox">
-        <div class="bg-cropbox">
-            <img class="image-cropbox">
-            <div class="membrane-cropbox"></div>
-        </div>
-        <div class="frame-cropbox">
-            <div class="resize-cropbox"></div>
-        </div>
+    <div class="alert alert-info message-container-cropbox"></div>
+    <div class="plugin"></div>
+    <div class="btn btn-primary btn-file">
+        <?php
+        echo '<i class="glyphicon glyphicon-folder-open"></i> ' . CropboxWidget::t('Browse');
+        if ($hasModel) {
+            echo Html::activeFileInput($this->context->model, $this->context->attribute, $this->context->options);
+        } else {
+            echo Html::fileInput($this->context->name, $this->context->value, $this->context->options);
+        }
+        ?>
     </div>
     <div class="btn-group">
-        <span class="btn btn-primary btn-file">
-        <?= '<i class="glyphicon glyphicon-folder-open"></i> '
-            . Cropbox::t('Browse') 
-            . Html::activeFileInput($this->context->model, $this->context->attribute, $this->context->options); ?>
-        </span>
-        <?= Html::button('<i class="glyphicon glyphicon-scissors"></i> ' . Cropbox::t('Crop'), [
+        <?= Html::button('<i class="glyphicon glyphicon-scissors"></i> ' . CropboxWidget::t('Crop'), [
             'class' => 'btn btn-success btn-crop',
         ]); ?>
-        <?= Html::button('<i class="glyphicon glyphicon-repeat"></i> ' . Cropbox::t('Reset'), [
+        <?= Html::button('<i class="glyphicon glyphicon-repeat"></i> ' . CropboxWidget::t('Reset'), [
             'class' => 'btn btn-warning btn-reset',
         ]); ?>
+        <?= Html::button('<i class="glyphicon glyphicon-minus"></i> ', [
+            'class' => 'btn btn-default btn-scale-out',
+        ]); ?>
+        <?= Html::button('<i class="glyphicon glyphicon-plus"></i> ', [
+            'class' => 'btn btn-default btn-scale-in',
+        ]); ?>
     </div>
-    <div class="cropped">
+    <div class="cropped-images-cropbox">
         <p>
             <?php 
             if (!empty($this->context->originalImageUrl)) {
                 echo Html::a(
-                    '<i class="glyphicon glyphicon-eye-open"></i> ' . Cropbox::t('Show original'), 
+                    '<i class="glyphicon glyphicon-eye-open"></i> ' . CropboxWidget::t('Show original'),
                     $this->context->originalImageUrl, 
                     [
                         'target' => '_blank',
@@ -43,14 +46,17 @@ use bupy7\cropbox\Cropbox;
             ?>
         </p>
         <?php
-        if (!empty($this->context->previewImagesUrl)) {
-            foreach ($this->context->previewImagesUrl as $url) {
-                if (!empty($url)) {
-                    echo Html::img($url, ['class' => 'img-thumbnail']);
-                }
-            }
+        $croppedImagesUrl = (array) $this->context->croppedImagesUrl;
+        foreach ($croppedImagesUrl as $url) {
+            echo Html::img($url, ['class' => 'img-thumbnail']);
         }
         ?>
     </div>
-    <?= Html::activeHiddenInput($this->context->model, $this->context->attributeCropInfo); ?>
+    <?php
+    if ($hasModel) {
+        echo Html::activeHiddenInput($this->context->model, $this->context->croppedDataAttribute);
+    } else {
+        echo Html::hiddenInput($this->context->croppedDataName, $this->context->croppedDataValue);
+    } 
+    ?>
 </div>

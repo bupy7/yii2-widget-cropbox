@@ -1,10 +1,10 @@
 @charset "UTF-8";
 
-div.cropbox .btn-file {
+.cropbox .btn-file {
     position: relative;
     overflow: hidden;
 }
-div.cropbox .btn-file input[type=file] {
+.cropbox .btn-file input[type=file] {
     position: absolute;
     top: 0;
     right: 0;
@@ -19,10 +19,20 @@ div.cropbox .btn-file input[type=file] {
     cursor: inherit;
     display: block;
 }
-div.cropbox .cropped {
+.cropped-images-cropbox {
     padding: 10px 0 5px 0;
 }
-div.cropbox .img-thumbnail {
+.cropped-images-cropbox .img-thumbnail {
     margin-right: 5px;
     margin-bottom: 5px;
+}
+.workarea-cropbox,
+.bg-cropbox {
+    height: 500px;
+    min-height: 500px;
+    width: 500px;
+    min-width: 500px;
+}
+.message-container-cropbox {
+    display: none;
 }
