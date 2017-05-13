@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use bupy7\cropbox\CropboxWidget;
+
 ?>
 <div id="<?= $this->context->id; ?>" class="cropbox">
     <div class="alert alert-info message-container-cropbox"></div>
@@ -36,13 +37,13 @@ use bupy7\cropbox\CropboxWidget;
             if (!empty($this->context->originalImageUrl)) {
                 echo Html::a(
                     '<i class="glyphicon glyphicon-eye-open"></i> ' . CropboxWidget::t('Show original'),
-                    $this->context->originalImageUrl, 
+                    $this->context->originalImageUrl,
                     [
                         'target' => '_blank',
                         'class' => 'btn btn-info',
                     ]
                 );
-            } 
+            }
             ?>
         </p>
         <?php
@@ -57,6 +58,6 @@ use bupy7\cropbox\CropboxWidget;
         echo Html::activeHiddenInput($this->context->model, $this->context->croppedDataAttribute);
     } else {
         echo Html::hiddenInput($this->context->croppedDataName, $this->context->croppedDataValue);
-    } 
+    }
     ?>
 </div>
