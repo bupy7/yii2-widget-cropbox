@@ -5,7 +5,6 @@ return [
     'basePath' => __DIR__ . '/..',
     'vendorPath' => __DIR__ . '/../../../../vendor',
     'aliases' => [
-        '@bower' => __DIR__ . '/../../../../vendor/bower-asset',
         '@bupy7/cropbox' => __DIR__ . '/../../../../src',
     ],
     'components' => [
