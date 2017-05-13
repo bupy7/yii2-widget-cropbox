@@ -1,4 +1,14 @@
+/**
+ * @author Vasily Belosludcev <bupy765@gmail.com>
+ * @param {jQuery} $
+ * @param {Cropbox} Cropbox
+ * @since 5.0.0
+ */
 (function($, Cropbox) {
+    'use strict';
+    /**
+     * @param {object|string} options
+     */
     $.fn.cropbox = function(options) {
         // call public method
         if (typeof options === 'string') {

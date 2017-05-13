@@ -11,16 +11,20 @@ use yii\web\AssetBundle;
 class WidgetAsset extends AssetBundle
 {
     public $sourcePath = '@bupy7/cropbox/resources';
-    public $css = [
-        'cropbox.css',
-    ];
-    public $js = [
-        'cropbox.js',
-    ];
     public $depends = [
         'yii\web\JqueryAsset',
         'yii\bootstrap\BootstrapAsset',
         'bupy7\cropbox\assets\CropboxAsset',
     ];
+
+    /**
+     * @since 5.0.1
+     */
+    public function init()
+    {
+        $this->css = ['cropbox' . (!YII_DEBUG ? '.min' : '') . '.css'];
+        $this->js = ['cropbox' . (!YII_DEBUG ? '.min' : '') . '.js'];
+        parent::init();
+    }
 }
 

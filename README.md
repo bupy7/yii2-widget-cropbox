@@ -4,6 +4,8 @@ yii2-widget-cropbox
 [![Latest Stable Version](https://poser.pugx.org/bupy7/yii2-widget-cropbox/v/stable)](https://packagist.org/packages/bupy7/yii2-widget-cropbox) 
 [![Total Downloads](https://poser.pugx.org/bupy7/yii2-widget-cropbox/downloads)](https://packagist.org/packages/bupy7/yii2-widget-cropbox) 
 [![License](https://poser.pugx.org/bupy7/yii2-widget-cropbox/license)](https://packagist.org/packages/bupy7/yii2-widget-cropbox)
+[![Build Status](https://travis-ci.org/bupy7/yii2-widget-cropbox.svg?branch=master)](https://travis-ci.org/bupy7/yii2-widget-cropbox)
+[![Coverage Status](https://coveralls.io/repos/github/bupy7/yii2-widget-cropbox/badge.svg?branch=master)](https://coveralls.io/github/bupy7/yii2-widget-cropbox?branch=master)
 
 This is Yii2 widget wrapper for [js-cropbox](https://github.com/bupy7/js-cropbox).
 

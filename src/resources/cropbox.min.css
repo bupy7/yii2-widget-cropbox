@@ -1,0 +1,2 @@
+
+@charset "UTF-8";.cropbox .btn-file{position:relative;overflow:hidden}.cropbox .btn-file input[type=file]{position:absolute;top:0;right:0;min-width:100%;min-height:100%;font-size:100px;text-align:right;filter:alpha(opacity=0);opacity:0;outline:0;background:white;cursor:inherit;display:block}.cropped-images-cropbox{padding:10px 0 5px 0}.cropped-images-cropbox .img-thumbnail{margin-right:5px;margin-bottom:5px}.workarea-cropbox,.bg-cropbox{height:500px;min-height:500px;width:500px;min-width:500px}.message-container-cropbox{display:none}
