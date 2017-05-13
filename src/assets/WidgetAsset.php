@@ -27,4 +27,3 @@ class WidgetAsset extends AssetBundle
         parent::init();
     }
 }
-

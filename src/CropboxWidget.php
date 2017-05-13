@@ -48,13 +48,13 @@ class CropboxWidget extends InputWidget
     public $originalImageUrl;
     /**
      * @var array URL to images for display before upload to preview URL.
-     * 
+     *
      * Example:
      * [
      *      '/uploads/1.png',
      *      '/uploads/2.png',
      * ];
-     * 
+     *
      * or simply string to image.
      */
     public $croppedImagesUrl;
@@ -65,10 +65,10 @@ class CropboxWidget extends InputWidget
     
     public function init()
     {
-        parent::init();        
+        parent::init();
         WidgetAsset::register($this->view);
-        $this->registerTranslations();      
-        $this->configuration();       
+        $this->registerTranslations();
+        $this->configuration();
     }
     
     public function run()
@@ -82,7 +82,7 @@ class CropboxWidget extends InputWidget
         
     /**
      * Translates a message to the specified language.
-     * 
+     *
      * @param string $message the message to be translated.
      * @param array $params the parameters that will be used to replace the corresponding placeholders in the message.
      * @param string $language the language code (e.g. `en-US`, `en`). If this is null, the current of application
