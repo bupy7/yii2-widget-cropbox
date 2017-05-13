@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.8/phpunit.xsd"
+    bootstrap="./tests/functionals/bootstrap.php"
+    verbose="true"
+    colors="true">
+    <testsuites>
+        <testsuite name="Yii2 Widget Cropbox Test Suite">
+            <directory>./tests/functionals</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+    <whitelist>
+            <directory suffix=".php">./src</directory>
+            <exclude>
+                <directory suffix=".php">./src/messages</directory>
+                <directory suffix=".php">./src/views</directory>
+            </exclude>
+    </whitelist>
+    </filter>
+    <logging>
+        <log type="coverage-html" target="build/coverage" charset="UTF-8" highlight="true"/>
+        <log type="coverage-clover" target="build/logs/clover.xml"/>
+    </logging>
+</phpunit>

@@ -14,6 +14,12 @@
         }
     ],
     "minimum-stability": "stable",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
     "require": {
         "yiisoft/yii2": "*",
         "yiisoft/yii2-bootstrap": "*",
@@ -21,7 +27,12 @@
     },
     "autoload": {
         "psr-4": {
-            "bupy7\\cropbox\\": ""
+            "bupy7\\cropbox\\": "src",
+            "bupy7\\cropbox\\tests\\": "tests"
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.7.19",
+        "satooshi/php-coveralls": "^1.0.1"
     }
 }

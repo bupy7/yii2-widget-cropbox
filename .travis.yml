@@ -1,0 +1,14 @@
+language: php
+php:
+    - '5.4'
+    - '5.5'
+    - '5.6'
+    - '7.0'
+    - hhvm
+
+before_script:
+    - composer self-update && composer --version
+    - composer install --no-interaction
+
+after_script:
+    - vendor/bin/coveralls -v
