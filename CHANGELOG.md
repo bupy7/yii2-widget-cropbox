@@ -1,6 +1,12 @@
 yii2-widget-cropbox
 ===================
 
+v5.0.1 [2017-05-13]
+-------------------
+
+- Minified resource files.
+- Added basic tests.
+
 v5.0.0 [2017-05-12]
 -------------------
 
