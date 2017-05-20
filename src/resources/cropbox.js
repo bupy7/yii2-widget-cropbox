@@ -62,6 +62,7 @@
             fileReader.readAsDataURL(this.files[0]);
             fileReader.onload = function(event) {
                 $th.cropbox('load', event.target.result);
+                $(s.fileInput).val(null);
             };
         });
         // reset
@@ -87,8 +88,8 @@
             $(s.croppedDataInput).val('');
         };
         $th.on('cb:reset', resetHandler);
-        // the loaded event
-        $th.on('cb:loaded', resetHandler);
+        // the ready event
+        $th.on('cb:ready', resetHandler);
         // the disabled/enabled event
         function disabledHandler() {
             $(s.btnScaleIn).attr('disabled', 'disabled');
