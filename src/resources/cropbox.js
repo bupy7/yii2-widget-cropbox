@@ -62,7 +62,6 @@
             fileReader.readAsDataURL(this.files[0]);
             fileReader.onload = function(event) {
                 $th.cropbox('load', event.target.result);
-                $(s.fileInput).val(null);
             };
         });
         // reset
